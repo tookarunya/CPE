@@ -178,7 +178,8 @@
     </div>
 
     <div id="loading-overlay" class="fixed inset-0 bg-gray-500 bg-opacity-75 z-50 flex items-center justify-center hidden">
-      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmM5ems4ZGR4bW82ZWF1d2RwZ2trdzc5d2JicDFoYXY3OTNmbGU2MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/sGBejL5i7iS9RTMnKx/giphy.gif" alt="Loading..." class="w-screen h-auto">
+		<img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdGk3aGRmNHJvMGxtZnJ0NnM3NTdzcG55NHV2MWticnEybDc1aWJjYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/uIJBFZoOaifHf52MER/giphy.gif" alt="Loading..." class="w-screen h-auto">
+<!--       <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmM5ems4ZGR4bW82ZWF1d2RwZ2trdzc5d2JicDFoYXY3OTNmbGU2MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/sGBejL5i7iS9RTMnKx/giphy.gif" alt="Loading..." class="w-screen h-auto"> -->
   </div>
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
@@ -205,7 +206,7 @@
     var line = document.getElementById('line').value;
 
    
-    if (fname.trim() === '' || lname.trim() === '' ||  email.trim() === '' || tel.trim() === '' || line.trim() === '') {
+    if (fname.trim() === '' || lname.trim() === '' || email.trim() === '' || tel.trim() === '' || line.trim() === '') {
         
         Swal.fire('Error', 'โปรดกรอกข้อมูลให้ครบทุกช่อง', 'error');
         return; 
@@ -228,7 +229,7 @@
             const name = profile.displayName;
             const userId = profile.userId;
             const picture = profile.pictureUrl;
-            sendToGoogleSheet(fname,lname, email, tel, line, userId, name, picture);
+            sendToGoogleSheet(fname, lname, email, tel, line, userId, name, picture);
         })
         .catch(err => {
             console.log("Error", err);
@@ -248,7 +249,7 @@ function validatePhoneNumber(tel) {
     return re.test(tel);
 }
 
-     function sendToGoogleSheet(fname,lname, email, tel, line, userId, name, picture) {
+     function sendToGoogleSheet(fname, lname, email, tel, line, userId, name, picture) {
         $('#loading-overlay').removeClass('hidden');
         $.post('https://script.google.com/macros/s/AKfycbyabM8_5SjoMLrL4GUTwKClDPwrCqiQWyu86lsEnm2IRsxAj2xQ7uTMKvBaaIGMITYS/exec', {
             fname: fname,
