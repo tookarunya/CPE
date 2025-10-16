@@ -221,46 +221,7 @@
                                 "type": "bubble", "header": { "type": "box", "layout": "vertical", "contents": [ { "type": "text", "text": "ลงทะเบียนสำเร็จ", "weight": "bold", "color": "#1DB446", "size": "md" } ] },
                                 "hero": { "type": "image", "url": formDataForFlex.profilePic, "size": "full", "aspectRatio": "20:13", "aspectMode": "cover" },
                                 "body": { "type": "box", "layout": "vertical", "spacing": "md", "contents": [ { "type": "text", "text": "ข้อมูลการลงทะเบียน", "weight": "bold", "size": "xl", "margin": "md" }, { "type": "separator", "margin": "lg" }, { "type": "box", "layout": "vertical", "margin": "lg", "spacing": "sm", "contents": [ { "type": "box", "layout": "baseline", "spacing": "sm", "contents": [ { "type": "text", "text": "ชื่อ-สกุล", "color": "#aaaaaa", "size": "sm", "flex": 3 }, { "type": "text", "text": `${formDataForFlex.prefix} ${formDataForFlex.firstName} ${formDataForFlex.lastName}`, "wrap": true, "color": "#666666", "size": "sm", "flex": 7 } ] }, { "type": "box", "layout": "baseline", "spacing": "sm", "contents": [ { "type": "text", "text": "เลขใบประกอบฯ", "color": "#aaaaaa", "size": "sm", "flex": 3 }, { "type": "text", "text": formDataForFlex.license, "wrap": true, "color": "#666666", "size": "sm", "flex": 7 } ] }, { "type": "box", "layout": "baseline", "spacing": "sm", "contents": [ { "type": "text", "text": "เบอร์โทร", "color": "#aaaaaa", "size": "sm", "flex": 3 }, { "type": "text", "text": formDataForFlex.phone, "wrap": true, "color": "#666666", "size": "sm", "flex": 7 } ] }, { "type": "box", "layout": "baseline", "spacing": "sm", "contents": [ { "type": "text", "text": "อีเมล", "color": "#aaaaaa", "size": "sm", "flex": 3 }, { "type": "text", "text": formDataForFlex.email, "wrap": true, "color": "#666666", "size": "sm", "flex": 7 } ] } ] } ] },
-                                // "footer": { "type": "box", "layout": "vertical", "spacing": "md", "contents": [ { "type": "text", "text": "สถานะ: รอการตรวจสอบสิทธิ์", "size": "sm", "align": "center", "weight": "bold", "color": "#999999" }, { "type": "text", "text": "เจ้าหน้าที่จะดำเนินการตรวจสอบข้อมูลและแจ้งผลให้ท่านทราบอีกครั้ง", "wrap": true, "size": "xs", "align": "center", "color": "#BDBDBD" }, { "type": "separator", "margin": "lg" }, { "type": "button", "style": "link", "height": "sm", "action": { "type": "uri", "label": "ต้องการแก้ไขข้อมูล? ติดต่อเจ้าหน้าที่", "uri": "https://line.me/ti/p/YOUR_OA_ID" }, "color": "#905c78" } ] } // <-- *** ใส่ลิงก์ Add Friend ของ OA ***
-                                "footer": {
-    "type": "box",
-    "layout": "vertical",
-    "spacing": "md",
-    "contents": [
-        {
-            "type": "text",
-            "text": "สถานะ: รอการตรวจสอบสิทธิ์",
-            "size": "sm",
-            "align": "center",
-            "weight": "bold",
-            "color": "#555555"
-        },
-        {
-            "type": "text",
-            "text": "เจ้าหน้าที่จะดำเนินการตรวจสอบข้อมูลและแจ้งผลให้ท่านทราบอีกครั้ง",
-            "wrap": true,
-            "size": "xs",
-            "align": "center",
-            "color": "#888888"
-        },
-        {
-            "type": "separator",
-            "margin": "lg"
-        },
-        {
-            "type": "button",
-            "style": "primary",
-            "height": "sm",
-            "color": "#D18DA1",
-            "action": {
-                "type": "message",
-                "label": "แจ้ง...ขอแก้ไขข้อมูล",
-                "text": "ติดต่อขอแก้ไขข้อมูลส่วนบุคคล"
-            },
-            "margin": "md"
-        }
-    ]
-}
+                                "footer": { "type": "box", "layout": "vertical", "spacing": "md", "contents": [ { "type": "text", "text": "สถานะ: รอการตรวจสอบสิทธิ์", "size": "sm", "align": "center", "weight": "bold", "color": "#999999" }, { "type": "text", "text": "เจ้าหน้าที่จะดำเนินการตรวจสอบข้อมูลและแจ้งผลให้ท่านทราบอีกครั้ง", "wrap": true, "size": "xs", "align": "center", "color": "#BDBDBD" }, { "type": "separator", "margin": "lg" }, { "type": "button", "style": "link", "height": "sm", "action": { "type": "uri", "label": "ต้องการแก้ไขข้อมูล? ติดต่อเจ้าหน้าที่", "uri": "https://lin.ee/9IUdSZe" }, "color": "#905c78" } ] } // <-- *** ใส่ลิงก์ Add Friend ของ OA ***
                             }
                         };
                         
