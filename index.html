@@ -164,13 +164,20 @@
                     return;
                 }
                 const profile = await liff.getProfile();
-                document.getElementById('lineProfilePicture').src = profile.pictureUrl;
+
+                // --- FIX: ตรวจสอบก่อนว่ามีรูปโปรไฟล์หรือไม่ ---
+                if (profile.pictureUrl) {
+                    document.getElementById('lineProfilePicture').src = profile.pictureUrl;
+                    document.getElementById('upic').value = profile.pictureUrl;
+                } else {
+                    // ถ้าไม่มีรูป ให้ส่งค่าว่างสำหรับ upic หรือใช้รูป placeholder ต่อไป
+                    document.getElementById('upic').value = ""; 
+                }
+
+                // ข้อมูลสำคัญส่วนอื่น ๆ จะทำงานต่อได้ตามปกติ ไม่หยุดชะงัก
                 document.getElementById('lineDisplayName').textContent = profile.displayName;
-                
                 document.getElementById('uid').value = profile.userId;
                 document.getElementById('uname').value = profile.displayName;
-                document.getElementById('upic').value = profile.pictureUrl;
-
             } catch (err) { /* Error handling... */ }
             
             const form = document.getElementById('loginForm');
