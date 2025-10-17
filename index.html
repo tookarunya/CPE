@@ -152,7 +152,7 @@
     <script>
         async function main() {
             try {
-                await liff.init({ liffId: "1661318361-X8w9wEbm" }); // <-- *** ใส่ LIFF ID ของคุณ ***
+                await liff.init({ liffId: "2007356106-N3LGkD4Z" }); // <-- *** ใส่ LIFF ID ของคุณ ***
                 if (!liff.isLoggedIn()) {
                     liff.login({ redirectUri: window.location.href });
                     return;
@@ -193,7 +193,7 @@
                 textInputs.forEach(el => { el.readOnly = this.checked; });
             });
 
-            const scriptURL = 'https://script.google.com/a/macros/pharm.chula.ac.th/s/AKfycbw0jUdW1rmKoHq8bix3Ll4qenPjaAFwuJYekLuKky3K-hx4bf8pEhd3ct1GKmz2-WKv/exec'; // <-- *** ใส่ URL ของ Apps Script ***
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbw-B7GIR7mMTcW4EhNTTU1-wfNQVo2uIwuDS88rnNdjVdptSKSvF05bGwZqluLdzXDNcQ/exec'; // <-- *** ใส่ URL ของ Apps Script ***
             form.addEventListener('submit', e => {
                 e.preventDefault();
                 document.getElementById('timestamp').value = new Date().toISOString();
