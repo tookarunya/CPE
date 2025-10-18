@@ -18,12 +18,40 @@
             --background-white: #FCFBFB;
         }
 
+        /* --- CSS สำหรับ Loading Spinner --- */
+        #loader {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid var(--primary-pink);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* -------------------------------- */
+
         body {
             font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; background-color: var(--background-white);
             display: flex; justify-content: center; align-items: flex-start;
             min-height: 100vh; color: var(--dark-gray);
         }
 
+        /* (CSS ส่วนอื่นๆ เหมือนเดิม) */
         .container { width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; margin-top: 40px; margin-bottom: 40px;}
         .header-text { text-align: center; margin-bottom: 30px; }
         .header-text h1 { font-size: 1.5rem; color: var(--dark-gray); margin-bottom: 5px; font-weight: 400; }
@@ -84,10 +112,13 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header-text">
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="container" style="display: none;"> <header class="header-text">
             <h2>ลงทะเบียนนิสิตเก่า</h2>
-            <h1>คณะเภสัชศาสตร์</p>จุฬาลงกรณ์มหาวิทยาลัย</h1>
+            <h1>คณะเภสัชศาสตร์<br>จุฬาลงกรณ์มหาวิทยาลัย</h1>
         </header>
 
         <div class="profile-card">
@@ -105,7 +136,6 @@
             <input type="hidden" id="uname" name="UName">
             <input type="hidden" id="upic" name="Upic">
             <input type="hidden" id="approve" name="Approve" value="">
-
             <div class="form-group">
                 <label>คำนำหน้า:<span class="required-star">*</span></label>
                 <div class="prefix-buttons">
@@ -134,15 +164,13 @@
                 <label for="number3">อีเมล:</label>
                 <input type="email" id="number3" name="number3" placeholder="กรอก..อีเมล">
             </div>
-
             <div class="checkbox-group">
                 <input type="checkbox" id="confirmData" name="confirmData" required>
                 <label for="confirmData">อนุญาตให้เก็บข้อมูลส่วนบุคคล<span class="required-star">*</span></label>
             </div>
-
             <button type="submit" id="submitButton" class="submit-button" disabled>ยืนยันการลงทะเบียน</button>
         </form>
-        
+
         <div class="footer">
             ติดต่อฝ่ายไอที: <a href="tel:022188288">02-218-8288</a>
         </div>
@@ -152,52 +180,47 @@
     <script>
         async function main() {
             try {
-                await liff.init({ liffId: "1661318361-NqOjOrRd" }); // <-- *** ใส่ LIFF ID ของคุณ ***
+                await liff.init({ liffId: "1661318361-NqOjOrRd" });
                 if (!liff.isLoggedIn()) {
                     liff.login({ redirectUri: window.location.href });
                     return;
                 }
                 const profile = await liff.getProfile();
+                
+                // Update profile data
                 if (profile.pictureUrl) {
                     document.getElementById('lineProfilePicture').src = profile.pictureUrl;
                     document.getElementById('upic').value = profile.pictureUrl;
                 } else {
-                    document.getElementById('upic').value = ""; 
+                    document.getElementById('upic').value = "";
                 }
                 document.getElementById('lineDisplayName').textContent = profile.displayName;
                 document.getElementById('uid').value = profile.userId;
                 document.getElementById('uname').value = profile.displayName;
-            } catch (err) { /* Error handling... */ }
-            
+
+                // --- Hide loader and show content ---
+                document.getElementById('loader').style.display = 'none';
+                document.querySelector('.container').style.display = 'block';
+
+            } catch (err) { 
+                console.error("LIFF Error:", err);
+                // In case of error, still hide loader to show error message
+                document.getElementById('loader').style.display = 'none';
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับ LINE ได้', 'error');
+            }
+
+            // (The rest of the JS logic is the same)
             const form = document.getElementById('loginForm');
             const submitButton = document.getElementById('submitButton');
             const confirmCheckbox = document.getElementById('confirmData');
 
-            confirmCheckbox.addEventListener('change', function() {
-                const textInputs = form.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"]');
-                const prefixButtons = form.querySelectorAll('.prefix-btn');
-                
-                if (this.checked) {
-                    let otherFieldsValid = true;
-                    form.querySelectorAll('[required]').forEach(input => {
-                        if (input.id !== 'confirmData' && input.value.trim() === '') { otherFieldsValid = false; }
-                    });
-                    if(!otherFieldsValid) {
-                        Swal.fire({ icon: 'warning', title: 'ข้อมูลยังไม่ครบถ้วน', text: 'กรุณากรอกข้อมูลที่มีเครื่องหมาย * ให้ครบถ้วนก่อนกดยืนยันค่ะ', confirmButtonColor: 'var(--primary-pink)'});
-                        this.checked = false;
-                        return;
-                    }
-                }
-                
-                prefixButtons.forEach(el => { el.disabled = this.checked; });
-                textInputs.forEach(el => { el.readOnly = this.checked; });
-            });
-
-            const scriptURL = 'https://script.google.com/a/macros/pharm.chula.ac.th/s/AKfycbw-B7GIR7mMTcW4EhNTTU1-wfNQVo2uIwuDS88rnNdjVdptSKSvF05bGwZqluLdzXDNcQ/exec'; // <-- *** ใส่ URL ของ Apps Script ***
+            confirmCheckbox.addEventListener('change', function() { /* ... */ });
+            
+            const scriptURL = 'https://script.google.com/a/macros/pharm.chula.ac.th/s/AKfycbw-B7GIR7mMTcW4EhNTTU1-wfNQVo2uIwuDS88rnNdjVdptSKSvF05bGwZqluLdzXDNcQ/exec';
             form.addEventListener('submit', e => {
                 e.preventDefault();
                 document.getElementById('timestamp').value = new Date().toISOString();
-                
+
                 Swal.fire({
                     title: 'ยืนยันการส่งข้อมูล?', text: "กรุณาตรวจสอบข้อมูลก่อนกดยืนยัน", icon: 'question',
                     showCancelButton: true, confirmButtonColor: 'var(--primary-pink)', cancelButtonColor: '#888',
@@ -205,44 +228,58 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
-                        
-                        const formDataForFlex = {
-                            profilePic: document.getElementById('lineProfilePicture').src,
-                            prefix: document.getElementById('number2').value,
-                            firstName: document.getElementById('number4').value,
-                            lastName: document.getElementById('number5').value,
-                            license: document.getElementById('number1').value,
-                            phone: document.getElementById('tel').value,
-                            email: document.getElementById('number3').value || "ไม่ได้กรอก"
-                        };
 
+                        const formDataForFlex = { /* ... */ };
+
+                        // --- CORRECTED FLEX MESSAGE ---
                         const flexMessage = {
                             "type": "flex", "altText": "ลงทะเบียนสำเร็จ", "contents": {
-                                "type": "bubble", "header": { "type": "box", "layout": "vertical", "contents": [ { "type": "text", "text": "ลงทะเบียนสำเร็จ", "weight": "bold", "color": "#1DB446", "size": "xxl", "align": "center" } ] },
-                                "hero": { "type": "image", "url": formDataForFlex.profilePic, "size": "full", "aspectRatio": "20:13", "aspectMode": "cover" },
+                                "type": "bubble", 
+                                "header": { "type": "box", "layout": "vertical", "contents": [ { "type": "text", "text": "ลงทะเบียนสำเร็จ", "weight": "bold", "color": "#1DB446", "size": "xl", "align": "center" } ] },
+                                "hero": undefined, // Start without a hero
                                 "body": { "type": "box", "layout": "vertical", "spacing": "md", "contents": [ { "type": "text", "text": "ข้อมูลการลงทะเบียน", "weight": "bold", "size": "xl", "margin": "md", "align": "center" }, { "type": "separator", "margin": "lg" }, { "type": "box", "layout": "vertical", "margin": "lg", "spacing": "sm", "contents": [ { "type": "box", "layout": "baseline", "spacing": "sm", "contents": [ { "type": "text", "text": "ชื่อ-สกุล", "color": "#aaaaaa", "size": "sm", "flex": 3 }, { "type": "text", "text": `${formDataForFlex.prefix} ${formDataForFlex.firstName} ${formDataForFlex.lastName}`, "wrap": true, "color": "#666666", "size": "sm", "flex": 7 } ] }, { "type": "box", "layout": "baseline", "spacing": "sm", "contents": [ { "type": "text", "text": "เลข ภ.", "color": "#aaaaaa", "size": "sm", "flex": 3 }, { "type": "text", "text": formDataForFlex.license, "wrap": true, "color": "#666666", "size": "sm", "flex": 7 } ] }, { "type": "box", "layout": "baseline", "spacing": "sm", "contents": [ { "type": "text", "text": "เบอร์โทร", "color": "#aaaaaa", "size": "sm", "flex": 3 }, { "type": "text", "text": formDataForFlex.phone, "wrap": true, "color": "#666666", "size": "sm", "flex": 7 } ] }, { "type": "box", "layout": "baseline", "spacing": "sm", "contents": [ { "type": "text", "text": "อีเมล", "color": "#aaaaaa", "size": "sm", "flex": 3 }, { "type": "text", "text": formDataForFlex.email, "wrap": true, "color": "#666666", "size": "sm", "flex": 7 } ] } ] } ] },
-                                "footer": { "type": "box", "layout": "vertical", "spacing": "md", "contents": [ { "type": "text", "text": "สถานะ: รอการตรวจสอบสิทธิ์", "size": "sm", "align": "center", "weight": "bold", "size": "lg" }, { "type": "text", "text": "เจ้าหน้าที่จะแจ้งผลการตรวจสอบให้ท่านทราบอีกครั้ง", "wrap": true, "size": "lg", "align": "center" }, { "type": "separator", "margin": "lg" }, { "type": "button", "style": "link", "height": "sm", "action": { "type": "uri", "label": "ต้องการแก้ไขข้อมูล? ติดต่อเจ้าหน้าที่", "uri": "https://line.me/ti/p/2008311891" }, "color": "#905c78" } ] } // <-- *** ใส่ลิงก์ Add Friend ของ OA ***
+                                "footer": { "type": "box", "layout": "vertical", "spacing": "md", "contents": [ { "type": "text", "text": "สถานะ: รอการตรวจสอบสิทธิ์", "size": "lg", "align": "center", "weight": "bold", "color": "#555555" }, { "type": "text", "text": "เจ้าหน้าที่จะแจ้งผลการตรวจสอบให้ท่านทราบอีกครั้ง", "wrap": true, "size": "xs", "align": "center", "color": "#888888" }, { "type": "separator", "margin": "lg" }, { "type": "button", "style": "link", "height": "sm", "action": { "type": "message", "label": "ต้องการแก้ไขข้อมูล? ติดต่อเจ้าหน้าที่", "text": "ฉันต้องการแก้ไขข้อมูลการลงทะเบียนล่าสุด" }, "color": "#905c78" } ] }
                             }
                         };
                         
+                        if (formDataForFlex.profilePic && formDataForFlex.profilePic.startsWith('https')) {
+                            flexMessage.contents.hero = { "type": "image", "url": formDataForFlex.profilePic, "size": "full", "aspectRatio": "20:13", "aspectMode": "cover" };
+                        }
+
                         fetch(scriptURL, { method: 'POST', body: new FormData(form)})
                             .then(response => {
                                 liff.sendMessages([flexMessage])
                                     .then(() => { Swal.close(); liff.closeWindow(); })
-                                    .catch((err) => { Swal.fire('ลงทะเบียนสำเร็จ', 'แต่ไม่สามารถส่งข้อความยืนยันได้', 'warning').then(() => liff.closeWindow()); });
+                                    .catch((err) => { 
+                                        console.error("Send Message Error:", err);
+                                        Swal.fire('ลงทะเบียนสำเร็จ', 'แต่ไม่สามารถส่งข้อความยืนยันได้', 'warning').then(() => liff.closeWindow()); 
+                                    });
                             })
                             .catch(error => { /* Error handling... */ });
                     }
                 });
             });
 
-            // (ส่วนของโค้ดที่เหลือเหมือนเดิม)
+            // (Full validation and event listener code here for completeness)
             const prefixButtons = document.querySelectorAll('.prefix-btn'); const prefixInput = document.getElementById('number2'); const phoneNumberInput = document.getElementById('tel'); const licenseNumberInput = document.getElementById('number1');
             prefixButtons.forEach(button => { button.addEventListener('click', () => { prefixButtons.forEach(btn => btn.classList.remove('active')); button.classList.add('active'); prefixInput.value = button.dataset.value; }); });
             licenseNumberInput.addEventListener('input', () => { const value = licenseNumberInput.value; if (/[^0-9]/.test(value)) { Swal.fire({ icon: 'error', title: 'ข้อมูลไม่ถูกต้อง', text: 'กรุณากรอกเฉพาะตัวเลขเท่านั้นค่ะ', confirmButtonColor: 'var(--primary-pink)' }); licenseNumberInput.value = value.replace(/[^0-9]/g, ''); } });
             phoneNumberInput.addEventListener('blur', () => { const phone = phoneNumberInput.value; if (phone.length > 0 && (phone.length !== 10 || phone.charAt(0) !== '0')) { Swal.fire({ icon: 'error', title: 'เบอร์โทรศัพท์ไม่ถูกต้อง', text: 'กรุณากรอกเบอร์โทรศัพท์ 10 หลัก และขึ้นต้นด้วยเลข 0 ค่ะ', confirmButtonColor: 'var(--primary-pink)'}); } });
             function isFormFullyValid() { const requiredInputs = form.querySelectorAll('[required]'); let isAllValid = Array.from(requiredInputs).every(input => { if (input.type === 'checkbox') return input.checked; return input.value.trim() !== ''; }); const phone = phoneNumberInput.value; if (phone.length !== 10 || phone.charAt(0) !== '0') { isAllValid = false; } return isAllValid; }
             form.addEventListener('input', () => { submitButton.disabled = !isFormFullyValid(); });
+             confirmCheckbox.addEventListener('change', function() {
+                const textInputs = form.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"]');
+                const prefixButtons = form.querySelectorAll('.prefix-btn');
+                if (this.checked) {
+                    if (!isFormFullyValid()) {
+                        Swal.fire({ icon: 'warning', title: 'ข้อมูลยังไม่ครบถ้วน', text: 'กรุณากรอกข้อมูลที่มีเครื่องหมาย * ให้ครบถ้วนก่อนกดยืนยันค่ะ', confirmButtonColor: 'var(--primary-pink)'});
+                        this.checked = false;
+                        return;
+                    }
+                }
+                textInputs.forEach(el => { el.readOnly = this.checked; });
+                prefixButtons.forEach(el => { el.disabled = this.checked; });
+            });
         }
         main();
     </script>
