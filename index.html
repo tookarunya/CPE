@@ -1,527 +1,250 @@
-<html lang="en">
-    
+<!DOCTYPE html>
+<html lang="th">
 <head>
-    <base target="_top">
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ลงทะเบียนนิสิตเก่า</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        :root {
+            --primary-pink: #D18DA1; 
+            --dark-gray: #5C5455;
+            --light-gray: #DCDCDC;
+            --disabled-gray: #CCCCCC;
+            --background-white: #FCFBFB;
+        }
 
-    <link href='https://fonts.googleapis.com/css?family=Bai Jamjuree' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
-    <link href="style.css" rel="stylesheet" type="text/css" />
-    <!-- CSS only -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous" />
-    <title></title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
-        crossorigin="anonymous"></script>
+        body {
+            font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; background-color: var(--background-white);
+            display: flex; justify-content: center; align-items: flex-start;
+            min-height: 100vh; color: var(--dark-gray);
+        }
 
-    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Kanit" />
+        .container { width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; margin-top: 40px; margin-bottom: 40px;}
+        .header-text { text-align: center; margin-bottom: 30px; }
+        .header-text h1 { font-size: 1.5rem; color: var(--dark-gray); margin-bottom: 5px; font-weight: 400; }
+        .header-text h2 { font-size: 2.2rem; color: var(--dark-gray); margin-top: 0; font-weight: 600; }
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+        .profile-card {
+            display: flex; align-items: center; background-color: #FFFFFF; padding: 15px 20px;
+            border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05); margin-bottom: 30px;
+        }
+        .profile-avatar img { width: 60px; height: 60px; border-radius: 50%; margin-right: 15px; object-fit: cover; }
+        .profile-info p { margin: 0; font-size: 0.95rem; line-height: 1.5; }
 
-    <!-- CSS bootstrap@5.1.3 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        .registration-form { background-color: #FFFFFF; padding: 25px 30px; border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.03); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 600; }
+        .required-star { color: red; font-size: 1.1rem; margin-left: 2px;}
+
+        .form-group input {
+            width: 100%; padding: 12px 15px; border: 1px solid var(--light-gray); border-radius: 8px;
+            font-size: 1rem; color: var(--dark-gray); box-sizing: border-box; transition: all 0.2s ease-in-out;
+        }
+        .form-group input:focus { outline: none; border-color: var(--primary-pink); box-shadow: 0 0 5px rgba(209, 141, 161, 0.5); }
+        .form-group input:disabled, .form-group input[readonly] { background-color: #F5F5F5; cursor: not-allowed; }
+
+        .prefix-buttons { display: flex; gap: 10px; }
+        .prefix-btn {
+            flex: 1; padding: 12px; border: 1px solid var(--light-gray); border-radius: 8px;
+            background-color: #FFFFFF; color: var(--dark-gray); font-size: 1rem;
+            font-family: 'Sarabun', sans-serif; cursor: pointer; transition: all 0.2s ease-in-out;
+        }
+        .prefix-btn:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .prefix-btn.active { background-color: var(--primary-pink); color: white; border-color: var(--primary-pink); }
+        .prefix-btn:disabled { background-color: var(--disabled-gray); transform: none; box-shadow: none; cursor: not-allowed; color: #888; border-color: var(--disabled-gray); }
+
+        .prefix-btn.active:disabled { background-color: var(--primary-pink); opacity: 0.6; color: white; }
+        
+        .checkbox-group { display: flex; align-items: center; margin-top: 25px; margin-bottom: 30px; }
+        .checkbox-group input[type="checkbox"] { margin-right: 10px; width: 18px; height: 18px; }
+        .checkbox-group label { font-size: 1rem; cursor: pointer; }
+
+        .submit-button {
+            width: 100%; padding: 15px 20px; background-color: var(--primary-pink); color: white;
+            border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600;
+            cursor: pointer; transition: background-color 0.3s ease;
+        }
+        .submit-button:hover { background-color: #C17C8E; }
+        .submit-button:disabled { background-color: var(--disabled-gray); cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        .footer {
+            margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: #6B7280;
+        }
+        .footer a {
+            font-weight: 600; color: var(--primary-pink);
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-
 <body>
-    <div class="mt-4 text-center">
-        <div clas="justify-content-center align-items-center">
-            <!-- -------- ตัวเลขนับถอยหลัง ------ -->
-            <div id="timer"></div>
+    <div class="container">
+        <header class="header-text">
+            <h1>คณะเภสัชศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย</h1>
+            <h2>ลงทะเบียนนิสิตเก่า</h2>
+        </header>
 
-            <!-- -------- ข้อความแจ้งเตือนด้านล่างของตัวนับ ------ -->
-            <div class="mt-4 text-center text-light" id="msgStatus"></div>
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <img id="lineProfilePicture" src="https://via.placeholder.com/60x60/f0e0e0/806060?text=👤" alt="Profile Avatar">
+            </div>
+            <div class="profile-info">
+                <p><strong>ชื่อโปรไฟล์ LINE:</strong> <span id="lineDisplayName">[กรุณา Login ผ่าน LINE]</span></p>
+            </div>
         </div>
-    </div>
-    <section id="cover" style="display:none;">
-        <div id="loginPage" style="display:block;">
-            <div id="login-form" class="container-sm fade-in-page mt-4 card-form "
-                style="max-width: 25rem; display:block;">
-                <div class="container py-4">
-                    <div class="form-group mt-3">
-                        <form id="loginForm" class="was-validated" autocomplete="off" name="google-sheet"
-                            onsubmit="return validateForm()">
-                            <div class="container">
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-12 center">
-                                    <div class="form-row">
-                                        <div class="form-group col-md-12">
-                                            <center> <img id="picURL" class="avatar" alt="Cinque Terre" width="50"
-                                                    height="50"><br></center>
-                                            <div class="mb-3 mt-3">
-                                                <label for="uname" class="form-label">ชื่อลงทะเบียน:</label>
-                                                <input type="text" class="form-control" name="UName" id="uname"
-                                                    readonly>
-                                                <input id="uid" class="form-control" name="Uid" style="display:none;">
-                                                <img id="upic" name="Upic" width="25%">
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            <label for="number1">เบอร์โทรติดต่อ</label>
-                                            <input type="tel" class="form-control" pattern="[0-9]{10}"
-                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                                                placeholder="ระบุเบอร์โทรติดต่อกลับ" id="tel" name="tel" maxlength="10"
-                                                minlength="10" required>
-                                            <div class="valid-feedback">ผ่าน</div>
-                                            <div class="invalid-feedback">กรุณาป้อนเบอร์โทรให้ครบ10หลัก</div>
-                                        </div>
 
-                                        <div class="form-group col-md-12">
-                                            <label for="number1">ข้อมูล1</label>
-                                            <input type="text" class="form-control" placeholder="เลขที่1" id="number1"
-                                                name="number1" required>
-                                            <div class="valid-feedback">ผ่าน</div>
-                                            <div class="invalid-feedback">ผ่าน</div>
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            <label for="number2">วันเกิด</label>
-                                            <input type="date" class="form-control" placeholder="เลขที่2" id="number2"
-                                                name="number2" required>
-                                            <div class="valid-feedback">ผ่าน</div>
-                                            <div class="invalid-feedback">กรุณาป้อนข้อมูลให้ครบ</div>
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            <label for="number3">email</label>
-                                            <input type="email" class="form-control" placeholder="เลขที่3" id="number3"
-                                                name="number3" required>
-                                            <div class="valid-feedback">ผ่าน</div>
-                                            <div class="invalid-feedback">กรุณาป้อนข้อมูลให้ครบ</div>
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            <label for="number4">ข้อมูล4</label>
-                                            <input type="text" class="form-control" placeholder="เลขที่4" id="number4"
-                                                name="number4" required>
-                                            <div class="valid-feedback">ผ่าน</div>
-                                            <div class="invalid-feedback">กรุณาป้อนข้อมูลให้ครบ</div>
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            <label for="number5">ข้อมูล5</label>
-                                            <input type="text" class="form-control" placeholder="เลขที่5" id="number5"
-                                                name="number5" required>
-                                            <div class="valid-feedback">ผ่าน</div>
-                                            <div class="invalid-feedback">กรุณาป้อนข้อมูลให้ครบ</div>
-                                        </div>
-                                    </div>
-                                    <div class="row"> </div>
-                                    <div class="col"> </div>
-                                    <div class="form-check mb-3">
-                                        <script
-                                            src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-                                        <input type="checkbox" class="form-check-input" name='visto' id='visto' value=''
-                                            required>
-                                        <label class="form-check-label"
-                                            for="validationFormCheck1">ยอมรับเงื่อนไขตามตกลง</label>
-                                        <div class="invalid-feedback">หากไม่ยอมรับเงื่อนนไขจะไม่สามารถร่วมกิจกรรมได้
-                                        </div>
-                                    </div>
-                                    <button type="submit" name="submit" id="submit"
-                                        class="btn btn-primary bd-indigo-500 btn-block text-white" disabled><i
-                                            class="fas fa-paper-plane"></i> ลงทะเบียน</button>
-                                </div>
-                            </div>
-                    </div>
+        <form id="loginForm" name="google-sheet">
+            <input type="hidden" id="timestamp" name="Timestamp">
+            <input type="hidden" id="uid" name="Uid">
+            <input type="hidden" id="uname" name="UName">
+            <input type="hidden" id="upic" name="Upic">
+            <input type="hidden" id="approve" name="Approve" value="">
+
+            <div class="form-group">
+                <label>คำนำหน้า:<span class="required-star">*</span></label>
+                <div class="prefix-buttons">
+                    <button type="button" class="prefix-btn active" data-value="ภก.">ภก.</button>
+                    <button type="button" class="prefix-btn" data-value="ภญ.">ภญ.</button>
                 </div>
+                <input type="hidden" id="number2" name="number2" value="ภก.">
+            </div>
+            <div class="form-group">
+                <label for="number4">ชื่อ:<span class="required-star">*</span></label>
+                <input type="text" id="number4" name="number4" placeholder="กรอกชื่อจริง (ภาษาไทย)" required>
+            </div>
+            <div class="form-group">
+                <label for="number5">นามสกุล:<span class="required-star">*</span></label>
+                <input type="text" id="number5" name="number5" placeholder="กรอกนามสกุล (ภาษาไทย)" required>
+            </div>
+            <div class="form-group">
+                <label for="number1">เลขใบประกอบวิชาชีพ:<span class="required-star">*</span></label>
+                <input type="tel" id="number1" name="number1" placeholder="กรอกเฉพาะตัวเลข" required>
+            </div>
+            <div class="form-group">
+                <label for="tel">เบอร์โทรศัพท์:<span class="required-star">*</span></label>
+                <input type="tel" id="tel" name="tel" placeholder="ตัวเลข 10 หลัก ขึ้นต้นด้วย 0" maxlength="10" required>
+            </div>
+            <div class="form-group">
+                <label for="number3">อีเมล:</label>
+                <input type="email" id="number3" name="number3" placeholder="(ไม่บังคับ) กรอกอีเมล">
             </div>
 
-            </form>
+            <div class="checkbox-group">
+                <input type="checkbox" id="confirmData" name="confirmData" required>
+                <label for="confirmData">ยืนยันข้อมูลถูกต้อง<span class="required-star">*</span></label>
+            </div>
 
+            <button type="submit" id="submitButton" class="submit-button" disabled>ยืนยันการลงทะเบียน</button>
+        </form>
+        
+        <div class="footer">
+            ติดต่อฝ่ายไอที: <a href="tel:022188288">02-218-8288</a>
         </div>
-        </div>
-        </div>
+    </div>
 
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+        async function main() {
+            try {
+                await liff.init({ liffId: "2007356106-N3LGkD4Z" }); // <-- *** ใส่ LIFF ID ของคุณ ***
+                if (!liff.isLoggedIn()) {
+                    liff.login({ redirectUri: window.location.href });
+                    return;
+                }
+                const profile = await liff.getProfile();
+                if (profile.pictureUrl) {
+                    document.getElementById('lineProfilePicture').src = profile.pictureUrl;
+                    document.getElementById('upic').value = profile.pictureUrl;
+                } else {
+                    document.getElementById('upic').value = ""; 
+                }
+                document.getElementById('lineDisplayName').textContent = profile.displayName;
+                document.getElementById('uid').value = profile.userId;
+                document.getElementById('uname').value = profile.displayName;
+            } catch (err) { /* Error handling... */ }
+            
+            const form = document.getElementById('loginForm');
+            const submitButton = document.getElementById('submitButton');
+            const confirmCheckbox = document.getElementById('confirmData');
 
-
-
-
-
-
-        <script type="text/javascript">
-          
-
-            window.onload = function () {
-                initializeLiff("2007356106-N3LGkD4Z");
-            };
-
-            function initializeLiff(myLiffId) {
-                liff
-                    .init({
-                        liffId: myLiffId
-                    })
-                    .then(() => {
-                        getid();
-                    })
-                    .then(() => {
-                        testclick();
-                    })
-                    .catch(err => { });
-            }
-
-            function getid() {
-                liff.getProfile().then(function (profile) {
-                    const uid = profile.userId;
-                    const uname = profile.displayName;
-                    const upic = profile.pictureUrl;
-                    document.getElementById("picURL").src = upic;  // แสดงรูป Profile ที่ดึงมา
-                    document.getElementsByName("Uid")[0].value = uid;
-                    document.getElementsByName("UName")[0].value = uname;
-                    document.getElementsByName("Upic")[0].value = upic;
-                });
-            }
-
-            function testclick() {
-                //button1
-                document.getElementById("submit").addEventListener("click", function () {
-                    liff.getProfile().then(profile => {
-                        var name = profile.displayName;
-                        var picURL = profile.pictureUrl;
-                        var uid = profile.userId;
-                        var tel = document.getElementById("tel");
-                        var number1 = document.getElementById("number1");
-                        var number2 = document.getElementById("number2");
-                        var number3 = document.getElementById("number3");
-                        var number4 = document.getElementById("number4");
-                        var number5 = document.getElementById("number5");
-
-                        liff
-                            .sendMessages([
-                                {
-                                    type: "flex",
-                                    altText: "ลงทะเบียนสำเร็จ",
-                                    contents: {
-                                        "type": "bubble",
-                                        "hero": {
-                                            "type": "image",
-                                            "url": "" + picURL,
-                                            "size": "full",
-                                            "aspectRatio": "20:13",
-                                            "aspectMode": "cover",
-                                            "action": {
-                                                "type": "uri",
-                                                "uri": "https://shop.line.me/@tjj3754a"
-                                            }
-                                        },
-                                        "body": {
-                                            "type": "box",
-                                            "layout": "vertical",
-                                            "spacing": "md",
-                                            "action": {
-                                                "type": "uri",
-                                                "uri": "https://shop.line.me/@tjj3754a"
-                                            },
-                                            "contents": [
-                                                {
-                                                    "type": "text",
-                                                    "text": "ลงทะเบียนเรียบร้อยแล้ว!",
-                                                    "size": "md",
-                                                    "weight": "bold",
-                                                    "color": "#1DB446"
-                                                },
-                                                {
-                                                    "type": "box",
-                                                    "layout": "vertical",
-                                                    "spacing": "sm",
-                                                    "contents": [
-                                                        {
-                                                            "type": "box",
-                                                            "layout": "baseline",
-                                                            "contents": [
-                                                                {
-                                                                    "type": "icon",
-                                                                    "url": "https://img.favpng.com/10/13/23/push-button-reset-button-number-numeric-keypad-png-favpng-shqcGgimTiStnrF2tckr9auGh_t.jpg"
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "ข้อมูลที่1:",
-                                                                    "weight": "bold",
-                                                                    "margin": "sm",
-                                                                    "flex": 0
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "" + number1.value,
-                                                                    "size": "md",
-                                                                    "align": "end",
-                                                                    "weight": "bold"
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "type": "box",
-                                                            "layout": "baseline",
-                                                            "contents": [
-                                                                {
-                                                                    "type": "icon",
-                                                                    "url": "https://listimg.pinclipart.com/picdir/s/11-119955_red-number-2-clip-art-png-download.png"
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "วันเกิด:",
-                                                                    "weight": "bold",
-                                                                    "margin": "sm",
-                                                                    "flex": 0
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "" + number2.value,
-                                                                    "size": "md",
-                                                                    "align": "end",
-                                                                    "weight": "bold"
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "type": "box",
-                                                            "layout": "baseline",
-                                                            "contents": [
-                                                                {
-                                                                    "type": "icon",
-                                                                    "url": "https://cdn.picpng.com/3/figure-3-35405.png"
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "อีเมล:",
-                                                                    "weight": "bold",
-                                                                    "margin": "sm",
-                                                                    "flex": 0
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "" + number3.value,
-                                                                    "size": "md",
-                                                                    "align": "end",
-                                                                    "weight": "bold"
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "type": "box",
-                                                            "layout": "baseline",
-                                                            "contents": [
-                                                                {
-                                                                    "type": "icon",
-                                                                    "url": "https://image.shutterstock.com/image-illustration/four-4-number-button-260nw-17020453.jpg"
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "ข้อมูลที่4:",
-                                                                    "weight": "bold",
-                                                                    "margin": "sm",
-                                                                    "flex": 0
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "" + number4.value,
-                                                                    "size": "md",
-                                                                    "align": "end",
-                                                                    "weight": "bold"
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "type": "box",
-                                                            "layout": "baseline",
-                                                            "contents": [
-                                                                {
-                                                                    "type": "icon",
-                                                                    "url": "https://spng.pngfind.com/pngs/s/654-6546690_original-png-clip-art-file-red-button-5.png"
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "ข้อมูลที่5:",
-                                                                    "weight": "bold",
-                                                                    "margin": "sm",
-                                                                    "flex": 0
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "" + number5.value,
-                                                                    "size": "md",
-                                                                    "align": "end",
-                                                                    "weight": "bold"
-                                                                }
-                                                            ],
-                                                            "spacing": "md"
-                                                        }
-                                                    ]
-                                                },
-                                                {
-                                                    "type": "separator"
-                                                },
-                                                {
-                                                    "type": "text",
-                                                    "text": "Uid : " + uid,
-                                                    "wrap": true,
-                                                    "size": "sm",
-                                                    "align": "start",
-                                                    "margin": "sm",
-                                                    "weight": "bold"
-                                                },
-                                                {
-                                                    "type": "separator"
-                                                },
-                                                {
-                                                    "type": "text",
-                                                    "text": "ชื่อไลน์: " + name,
-                                                    "wrap": true,
-                                                    "size": "sm",
-                                                    "align": "start",
-                                                    "margin": "sm",
-                                                    "weight": "bold"
-                                                },
-                                                {
-                                                    "type": "separator"
-                                                },
-                                                {
-                                                    "type": "text",
-                                                    "text": "หมายเลขโทรศัพท์:" + tel.value,
-                                                    "wrap": true,
-                                                    "size": "sm",
-                                                    "align": "start",
-                                                    "flex": 0,
-                                                    "weight": "bold"
-                                                },
-                                                {
-                                                    "type": "separator"
-                                                },
-                                                {
-                                                    "type": "text",
-                                                    "text": "นี่คือเลขข้อมูลการลงทะเบียนของท่าน โปรดเก็บไว้เป็นหลักฐาน",
-                                                    "size": "sm",
-                                                    "align": "center",
-                                                    "color": "#ff3333"
-                                                }
-                                            ]
-                                        },
-                                        "footer": {
-                                            "type": "box",
-                                            "layout": "horizontal",
-                                            "contents": [
-                                                {
-                                                    "type": "button",
-                                                    "action": {
-                                                        "type": "uri",
-                                                        "label": "เยี่ยมชมร้านค้า",
-                                                        "uri": "https://shop.line.me/@692ajmyz"
-                                                    },
-                                                    "style": "primary"
-                                                },
-                                                {
-                                                    "type": "button",
-                                                    "action": {
-                                                        "type": "uri",
-                                                        "label": "ชวนเพื่อนมาเล่น",
-                                                        "uri": "https://line.me/R/nv/recommendOA/@692ajmyz"
-                                                    },
-                                                    "style": "primary",
-                                                    "margin": "xs",
-                                                    "color": "#ff0000"
-                                                }
-                                            ]
-                                        }
-                                    }
-
-                                }
-                            ])
-                            //   Swal.fire({
-                            //   icon: 'success',
-                            //   title: 'ขอให้โชคดี !!',
-                            //   showConfirmButton: false,
-                            //   text: 'ท่านได้ส่งข้อมูลการทายเลขเรียบร้อยแล้วค่ะ',
-                            //   timer: 1500
-                            //   })
-                            .then(function () {
-                                liff.closeWindow();
-                            });
+            confirmCheckbox.addEventListener('change', function() {
+                const textInputs = form.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"]');
+                const prefixButtons = form.querySelectorAll('.prefix-btn');
+                
+                if (this.checked) {
+                    let otherFieldsValid = true;
+                    form.querySelectorAll('[required]').forEach(input => {
+                        if (input.id !== 'confirmData' && input.value.trim() === '') { otherFieldsValid = false; }
                     });
-                });
-            }
+                    if(!otherFieldsValid) {
+                        Swal.fire({ icon: 'warning', title: 'ข้อมูลยังไม่ครบถ้วน', text: 'กรุณากรอกข้อมูลที่มีเครื่องหมาย * ให้ครบถ้วนก่อนกดยืนยันค่ะ', confirmButtonColor: 'var(--primary-pink)'});
+                        this.checked = false;
+                        return;
+                    }
+                }
+                
+                prefixButtons.forEach(el => { el.disabled = this.checked; });
+                textInputs.forEach(el => { el.readOnly = this.checked; });
+            });
 
-       
-            const scriptURL = 'https://script.google.com/a/macros/pharm.chula.ac.th/s/AKfycbx1GqBm3mrOFjRIr2bkCUMsyUqQ24spcAv8-5di_P00PENobauRZcF2LN6abv3NCQxU1g/exec'
-            const form = document.forms['google-sheet']
-
+            const scriptURL = 'https://script.google.com/a/macros/pharm.chula.ac.th/s/AKfycbx1GqBm3mrOFjRIr2bkCUMsyUqQ24spcAv8-5di_P00PENobauRZcF2LN6abv3NCQxU1g/exec'; // <-- *** ใส่ URL ของ Apps Script ***
             form.addEventListener('submit', e => {
-                e.preventDefault()
-                fetch(scriptURL, { method: 'POST', body: new FormData(form) })
-                    .then(response => alert("You have successfully submitted."))
-                    .catch(error => console.error('Error!', error.message))
-            })
-        </script>
+                e.preventDefault();
+                document.getElementById('timestamp').value = new Date().toISOString();
+                
+                Swal.fire({
+                    title: 'ยืนยันการส่งข้อมูล?', text: "กรุณาตรวจสอบข้อมูลก่อนกดยืนยัน", icon: 'question',
+                    showCancelButton: true, confirmButtonColor: 'var(--primary-pink)', cancelButtonColor: '#888',
+                    confirmButtonText: 'ยืนยัน', cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+                        
+                        const formDataForFlex = {
+                            profilePic: document.getElementById('lineProfilePicture').src,
+                            prefix: document.getElementById('number2').value,
+                            firstName: document.getElementById('number4').value,
+                            lastName: document.getElementById('number5').value,
+                            license: document.getElementById('number1').value,
+                            phone: document.getElementById('tel').value,
+                            email: document.getElementById('number3').value || "ไม่ได้กรอก"
+                        };
 
-        <script>
-            $(document).ready(function () {
-                $('#submit').prop('disabled', true);
-                $('#visto').click(function () {
-                    if ($(this).is(':checked')) {
-                        $('#submit').prop('disabled', false);
-                    }
-                    else {
-                        $('#submit').prop('disabled', true);
-                    }
-                });
-            });
-        </script>
-        <script>
-            function closeMe() {
-                setTimeout(window.close, 0);
-                liff.closeWindow();
-            }
-
-
-
-
-            function validateForm() {
-                  var telField = document.getElementById("tel");
-                  var number1Field = document.getElementById("number1");
-                  var number2Field = document.getElementById("number2");
-                  var number3Field = document.getElementById("number3");
-                  var number4Field = document.getElementById("number4");
-                  var number5Field = document.getElementById("number5");
-                  var vistoCheckbox = document.getElementById("visto");
-                  // Add your validation logic here
-                  var isValid = true;
-
-                  if (telField.value.length !== 10 || isNaN(telField.value)) {
-                      isValid = false;
-                    $('#submit').prop('disabled', true);
-                  }
-
-                  // Add more validation checks for other fields...
-
-                  // Enable or disable the submit button based on validation result
-                  var submitButton = document.getElementById("submit");
-                  submitButton.disabled = !isValid;
-                  return isValid;
-                 $('#submit').prop('disabled', true);
-              }
-            }
-
-            $(document).ready(function () {
-                $('#submit').prop('disabled', true);
-
-                $('#visto').click(function () {
-                    if ($(this).is(':checked')) {
-                        $('#submit').prop('disabled', false);
-                    } else {
-                        $('#submit').prop('disabled', true);
+                        const flexMessage = {
+                            "type": "flex", "altText": "ลงทะเบียนสำเร็จ", "contents": {
+                                "type": "bubble", "header": { "type": "box", "layout": "vertical", "contents": [ { "type": "text", "text": "ลงทะเบียนสำเร็จ", "weight": "bold", "color": "#1DB446", "size": "md" } ] },
+                                "hero": { "type": "image", "url": formDataForFlex.profilePic, "size": "full", "aspectRatio": "20:13", "aspectMode": "cover" },
+                                "body": { "type": "box", "layout": "vertical", "spacing": "md", "contents": [ { "type": "text", "text": "ข้อมูลการลงทะเบียน", "weight": "bold", "size": "xl", "margin": "md" }, { "type": "separator", "margin": "lg" }, { "type": "box", "layout": "vertical", "margin": "lg", "spacing": "sm", "contents": [ { "type": "box", "layout": "baseline", "spacing": "sm", "contents": [ { "type": "text", "text": "ชื่อ-สกุล", "color": "#aaaaaa", "size": "sm", "flex": 3 }, { "type": "text", "text": `${formDataForFlex.prefix} ${formDataForFlex.firstName} ${formDataForFlex.lastName}`, "wrap": true, "color": "#666666", "size": "sm", "flex": 7 } ] }, { "type": "box", "layout": "baseline", "spacing": "sm", "contents": [ { "type": "text", "text": "เลขใบประกอบฯ", "color": "#aaaaaa", "size": "sm", "flex": 3 }, { "type": "text", "text": formDataForFlex.license, "wrap": true, "color": "#666666", "size": "sm", "flex": 7 } ] }, { "type": "box", "layout": "baseline", "spacing": "sm", "contents": [ { "type": "text", "text": "เบอร์โทร", "color": "#aaaaaa", "size": "sm", "flex": 3 }, { "type": "text", "text": formDataForFlex.phone, "wrap": true, "color": "#666666", "size": "sm", "flex": 7 } ] }, { "type": "box", "layout": "baseline", "spacing": "sm", "contents": [ { "type": "text", "text": "อีเมล", "color": "#aaaaaa", "size": "sm", "flex": 3 }, { "type": "text", "text": formDataForFlex.email, "wrap": true, "color": "#666666", "size": "sm", "flex": 7 } ] } ] } ] },
+                                "footer": { "type": "box", "layout": "vertical", "spacing": "md", "contents": [ { "type": "text", "text": "สถานะ: รอการตรวจสอบสิทธิ์", "size": "sm", "align": "center", "weight": "bold", "color": "#999999" }, { "type": "text", "text": "เจ้าหน้าที่จะดำเนินการตรวจสอบข้อมูลและแจ้งผลให้ท่านทราบอีกครั้ง", "wrap": true, "size": "xs", "align": "center", "color": "#BDBDBD" }, { "type": "separator", "margin": "lg" }, { "type": "button", "style": "link", "height": "sm", "action": { "type": "uri", "label": "ต้องการแก้ไขข้อมูล? ติดต่อเจ้าหน้าที่", "uri": "https://line.me/ti/p/YOUR_OA_ID" }, "color": "#905c78" } ] } // <-- *** ใส่ลิงก์ Add Friend ของ OA ***
+                            }
+                        };
+                        
+                        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                            .then(response => {
+                                liff.sendMessages([flexMessage])
+                                    .then(() => { Swal.close(); liff.closeWindow(); })
+                                    .catch((err) => { Swal.fire('ลงทะเบียนสำเร็จ', 'แต่ไม่สามารถส่งข้อความยืนยันได้', 'warning').then(() => liff.closeWindow()); });
+                            })
+                            .catch(error => { /* Error handling... */ });
                     }
                 });
             });
-        </script>
 
-        <script src="script.js" theme="blue" defer></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
-        integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
-        integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
-        crossorigin="anonymous"></script>
+            // (ส่วนของโค้ดที่เหลือเหมือนเดิม)
+            const prefixButtons = document.querySelectorAll('.prefix-btn'); const prefixInput = document.getElementById('number2'); const phoneNumberInput = document.getElementById('tel'); const licenseNumberInput = document.getElementById('number1');
+            prefixButtons.forEach(button => { button.addEventListener('click', () => { prefixButtons.forEach(btn => btn.classList.remove('active')); button.classList.add('active'); prefixInput.value = button.dataset.value; }); });
+            licenseNumberInput.addEventListener('input', () => { const value = licenseNumberInput.value; if (/[^0-9]/.test(value)) { Swal.fire({ icon: 'error', title: 'ข้อมูลไม่ถูกต้อง', text: 'กรุณากรอกเฉพาะตัวเลขเท่านั้นค่ะ', confirmButtonColor: 'var(--primary-pink)' }); licenseNumberInput.value = value.replace(/[^0-9]/g, ''); } });
+            phoneNumberInput.addEventListener('blur', () => { const phone = phoneNumberInput.value; if (phone.length > 0 && (phone.length !== 10 || phone.charAt(0) !== '0')) { Swal.fire({ icon: 'error', title: 'เบอร์โทรศัพท์ไม่ถูกต้อง', text: 'กรุณากรอกเบอร์โทรศัพท์ 10 หลัก และขึ้นต้นด้วยเลข 0 ค่ะ', confirmButtonColor: 'var(--primary-pink)'}); } });
+            function isFormFullyValid() { const requiredInputs = form.querySelectorAll('[required]'); let isAllValid = Array.from(requiredInputs).every(input => { if (input.type === 'checkbox') return input.checked; return input.value.trim() !== ''; }); const phone = phoneNumberInput.value; if (phone.length !== 10 || phone.charAt(0) !== '0') { isAllValid = false; } return isAllValid; }
+            form.addEventListener('input', () => { submitButton.disabled = !isFormFullyValid(); });
+        }
+        main();
+    </script>
 </body>
-
 </html>
