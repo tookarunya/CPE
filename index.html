@@ -210,6 +210,7 @@
             form.addEventListener('submit', e => {
                 e.preventDefault();
                 document.getElementById('timestamp').value = new Date().toISOString();
+                
                 Swal.fire({
                     title: 'ยืนยันการส่งข้อมูล?', text: "กรุณาตรวจสอบข้อมูลก่อนกดยืนยัน", icon: 'question',
                     showCancelButton: true, confirmButtonColor: 'var(--primary-pink)', cancelButtonColor: '#888',
@@ -217,15 +218,34 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+                        
+                        // --- สร้าง Flex Message อันที่ 1 (สรุปข้อมูล) ---
+                        const formDataForFlex = {
+                            profilePic: document.getElementById('lineProfilePicture').src,
+                            prefix: document.getElementById('number2').value,
+                            firstName: document.getElementById('number4').value,
+                            lastName: document.getElementById('number5').value,
+                            license: document.getElementById('number1').value,
+                            phone: document.getElementById('tel').value,
+                            email: document.getElementById('number3').value || "ไม่ได้กรอก"
+                        };
+                        const flexMessage = { /* ... โค้ด Flex Message สรุปข้อมูล ... */ }; // (ใช้โค้ด Flex Message เดิมที่เคยทำงานได้)
+
+                        // ส่งข้อมูลไป Sheet ก่อน
                         fetch(scriptURL, { method: 'POST', body: new FormData(form)})
                             .then(response => {
-                                Swal.fire({ title: 'ลงทะเบียนสำเร็จ!', text: 'ขอบคุณที่ให้ข้อมูลค่ะ', icon: 'success', confirmButtonColor: 'var(--primary-pink)'})
-                                .then(() => { if (liff) liff.closeWindow(); });
+                                // เมื่อลง Sheet สำเร็จ ค่อยส่ง Flex Message อันที่ 1
+                                liff.sendMessages([flexMessage])
+                                    .then(() => {
+                                        Swal.close();
+                                        liff.closeWindow();
+                                    })
+                                    .catch((err) => {
+                                        // ถ้าส่ง Flex ไม่ได้ ก็ยังถือว่าลงทะเบียนสำเร็จ
+                                        Swal.fire('ลงทะเบียนสำเร็จ', 'แต่ไม่สามารถส่งข้อความยืนยันได้', 'warning').then(() => liff.closeWindow());
+                                    });
                             })
-                            .catch(error => {
-                                Swal.fire({ title: 'เกิดข้อผิดพลาด!', text: 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง', icon: 'error', confirmButtonColor: 'var(--primary-pink)'});
-                                console.error('Error!', error.message);
-                            });
+                            .catch(error => { /* ... จัดการ Error ... */ });
                     }
                 });
             });
