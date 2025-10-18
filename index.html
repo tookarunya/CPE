@@ -17,7 +17,31 @@
             --disabled-gray: #CCCCCC;
             --background-white: #FCFBFB;
         }
-
+        /* --- CSS สำหรับ Loading Spinner --- */
+        #loader {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid var(--primary-pink);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         body {
             font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; background-color: var(--background-white);
             display: flex; justify-content: center; align-items: flex-start;
@@ -84,6 +108,12 @@
     </style>
 </head>
 <body>
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="container" style="display: none;">
+        </div>
     <div class="container">
         <header class="header-text">
             <h1>คณะเภสัชศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย</h1>
@@ -163,6 +193,17 @@
                 document.getElementById('uid').value = profile.userId;
                 document.getElementById('uname').value = profile.displayName;
                 document.getElementById('upic').value = profile.pictureUrl || '';
+            .then(profile => {
+                // ... (โค้ดดึงโปรไฟล์) ...
+                document.getElementById('upic').value = profile.pictureUrl || '';
+
+                // --- เพิ่ม 2 บรรทัดนี้ ---
+                document.getElementById('loader').style.display = 'none';
+                document.querySelector('.container').style.display = 'block';
+            })
+
+
+                
             } catch(err) { /* Error handling */ }
             
             const form = document.getElementById('loginForm');
