@@ -102,7 +102,7 @@
     <div class="container" style="display: none;">
         <header class="header-text">
             <h2>ลงทะเบียนนิสิตเก่า</h2>
-            <h1>คณะเภสัชศาสตร์<br>จุฬาลงกรณ์มหาวิทยาลัย</h1>
+            <h1>คณะเภสัชศาสตร์<br>จุฬาลงกรณ์มหาวิทยาลัย</h1>            
         </header>
 
         <div class="profile-card">
@@ -110,7 +110,7 @@
                 <img id="lineProfilePicture" src="https://via.placeholder.com/60x60/f0e0e0/806060?text=👤" alt="Profile Avatar">
             </div>
             <div class="profile-info">
-                <p><strong>ชื่อโปรไฟล์ LINE:</strong> <span id="lineDisplayName">กำลังโหลดข้อมูล.....</span></p>
+                <p><strong>ชื่อโปรไฟล์ LINE:</strong> <span id="lineDisplayName">กำลังโหลดข้อมูล...</span></p>
             </div>
         </div>
         
@@ -204,6 +204,8 @@
             // (The rest of the script is the same stable version)
             const form = document.getElementById('loginForm');
             const submitButton = document.getElementById('submitButton');
+            const confirmCheckbox = document.getElementById('confirmData');
+            
             const scriptURL = 'https://script.google.com/a/macros/pharm.chula.ac.th/s/AKfycbw-B7GIR7mMTcW4EhNTTU1-wfNQVo2uIwuDS88rnNdjVdptSKSvF05bGwZqluLdzXDNcQ/exec';
             form.addEventListener('submit', e => {
                 e.preventDefault();
@@ -229,7 +231,6 @@
             });
 
             // (Validation and other event listeners)
-            const confirmCheckbox = document.getElementById('confirmData');
             const prefixButtons = document.querySelectorAll('.prefix-btn'); const prefixInput = document.getElementById('number2'); const phoneNumberInput = document.getElementById('tel'); const licenseNumberInput = document.getElementById('number1');
             prefixButtons.forEach(button => { button.addEventListener('click', () => { prefixButtons.forEach(btn => btn.classList.remove('active')); button.classList.add('active'); prefixInput.value = button.dataset.value; }); });
             licenseNumberInput.addEventListener('input', () => { const value = licenseNumberInput.value; if (/[^0-9]/.test(value)) { Swal.fire({ icon: 'error', title: 'ข้อมูลไม่ถูกต้อง', text: 'กรุณากรอกเฉพาะตัวเลขเท่านั้นค่ะ', confirmButtonColor: 'var(--primary-pink)' }); licenseNumberInput.value = value.replace(/[^0-9]/g, ''); } });
