@@ -9,8 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    
+
     <style>
+        /* === FINAL STABLE CSS === */
         :root {
             --primary-pink: #D18DA1; 
             --dark-gray: #5C5455;
@@ -18,11 +19,29 @@
             --disabled-gray: #CCCCCC;
             --background-white: #FCFBFB;
         }
+
+        /* --- CSS for Loading Spinner (กลับมาแล้วค่ะ) --- */
+        #loader {
+            position: fixed; left: 0; top: 0; width: 100%; height: 100%;
+            z-index: 9999; background: rgba(255, 255, 255, 0.8);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3; border-top: 8px solid var(--primary-pink);
+            border-radius: 50%; width: 60px; height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* (The rest of the CSS is the same...) */
         body {
             font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; background-color: var(--background-white);
             display: flex; justify-content: center; align-items: flex-start;
             min-height: 100vh; color: var(--dark-gray);
         }
+
         .container { width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; margin-top: 40px; margin-bottom: 40px;}
         .header-text { text-align: center; margin-bottom: 30px; }
         .header-text h1 { font-size: 1.5rem; color: var(--dark-gray); margin-bottom: 5px; font-weight: 400; }
@@ -75,10 +94,14 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="container" style="display: none;">
         <header class="header-text">
-            <h1>คณะเภสัชศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย</h1>
             <h2>ลงทะเบียนนิสิตเก่า</h2>
+            <h1>คณะเภสัชศาสตร์<br>จุฬาลงกรณ์มหาวิทยาลัย</h1>       
         </header>
         <div class="profile-card">
             <div class="profile-avatar">
@@ -134,24 +157,48 @@
         </div>
     </div>
     <script>
-        async function main() {
-            try {
-                await liff.init({ liffId: "1661318361-NqOjOrRd" }); // <-- *** ใส่ LIFF ID ที่ถูกต้อง ***
-            } catch (err) { /* Error handling */ return; }
-            if (!liff.isLoggedIn()) { liff.login({ redirectUri: window.location.href }); return; }
-            try {
-                const profile = await liff.getProfile();
-                document.getElementById('lineProfilePicture').src = profile.pictureUrl || 'https://via.placeholder.com/60x60/f0e0e0/806060?text=👤';
-                document.getElementById('lineDisplayName').textContent = profile.displayName;
-                document.getElementById('uid').value = profile.userId;
-                document.getElementById('uname').value = profile.displayName;
-                document.getElementById('upic').value = profile.pictureUrl || '';
-            } catch(err) { /* Error handling */ }
-            
+        document.addEventListener('DOMContentLoaded', function() {
+            const loader = document.getElementById('loader');
+            const container = document.querySelector('.container');
+
+            // 3. LIFF Initialization with Spinner Control
+            liff.init({ liffId: "1661318361-NqOjOrRd" }) // <-- *** ใส่ LIFF ID ที่ถูกต้อง ***
+                .then(() => {
+                    if (!liff.isLoggedIn()) {
+                        liff.login();
+                        return;
+                    }
+                    liff.getProfile()
+                        .then(profile => {
+                            // --- SUCCESS: Profile data is fetched ---
+                            document.getElementById('lineProfilePicture').src = profile.pictureUrl || 'https://via.placeholder.com/60x60/f0e0e0/806060?text=👤';
+                            document.getElementById('lineDisplayName').textContent = profile.displayName;
+                            document.getElementById('uid').value = profile.userId;
+                            document.getElementById('uname').value = profile.displayName;
+                            document.getElementById('upic').value = profile.pictureUrl || '';
+                            
+                            // Hide the spinner and show the main content
+                            loader.style.display = 'none';
+                            container.style.display = 'block';
+                        })
+                        .catch(err => {
+                            // --- ERROR getting profile ---
+                            console.error("Get Profile Error:", err);
+                            loader.style.display = 'none';
+                            Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลโปรไฟล์ LINE ได้ กรุณาลองอีกครั้ง', 'error');
+                        });
+                })
+                .catch(err => {
+                    // --- ERROR initializing LIFF ---
+                    console.error("LIFF Init Error:", err);
+                    loader.style.display = 'none';
+                    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับ LIFF ได้ กรุณาตรวจสอบ LIFF ID', 'error');
+                });
+
+            // (The rest of the script is the same stable version)
             const form = document.getElementById('loginForm');
             const submitButton = document.getElementById('submitButton');
-            const scriptURL = 'https://script.google.com/a/macros/pharm.chula.ac.th/s/AKfycbw-B7GIR7mMTcW4EhNTTU1-wfNQVo2uIwuDS88rnNdjVdptSKSvF05bGwZqluLdzXDNcQ/exec'; // <-- *** ใส่ URL ของ Apps Script ***
-
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbw-B7GIR7mMTcW4EhNTTU1-wfNQVo2uIwuDS88rnNdjVdptSKSvF05bGwZqluLdzXDNcQ/exec';
             form.addEventListener('submit', e => {
                 e.preventDefault();
                 document.getElementById('timestamp').value = new Date().toISOString();
@@ -164,8 +211,8 @@
                         Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
                         fetch(scriptURL, { method: 'POST', body: new FormData(form)})
                             .then(response => {
-                                // เมื่อสำเร็จ แค่ปิดหน้าต่าง (ข้อความยืนยันจะถูกส่งจากหลังบ้านเอง)
-                                if (liff) liff.closeWindow();
+                                Swal.fire({ title: 'ลงทะเบียนสำเร็จ!', text: 'ขอบคุณที่ให้ข้อมูลค่ะ', icon: 'success', confirmButtonColor: 'var(--primary-pink)'})
+                                .then(() => { if (liff) liff.closeWindow(); });
                             })
                             .catch(error => {
                                 Swal.fire({ title: 'เกิดข้อผิดพลาด!', text: 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง', icon: 'error', confirmButtonColor: 'var(--primary-pink)'});
@@ -175,8 +222,9 @@
                 });
             });
 
-            // (ส่วน Validation และ Event Listeners อื่นๆ เหมือนเดิม)
-            const prefixButtons = document.querySelectorAll('.prefix-btn'); const prefixInput = document.getElementById('number2'); const phoneNumberInput = document.getElementById('tel'); const licenseNumberInput = document.getElementById('number1'); const confirmCheckbox = document.getElementById('confirmData');
+            // (Validation and other event listeners)
+            const confirmCheckbox = document.getElementById('confirmData');
+            const prefixButtons = document.querySelectorAll('.prefix-btn'); const prefixInput = document.getElementById('number2'); const phoneNumberInput = document.getElementById('tel'); const licenseNumberInput = document.getElementById('number1');
             prefixButtons.forEach(button => { button.addEventListener('click', () => { prefixButtons.forEach(btn => btn.classList.remove('active')); button.classList.add('active'); prefixInput.value = button.dataset.value; }); });
             licenseNumberInput.addEventListener('input', () => { const value = licenseNumberInput.value; if (/[^0-9]/.test(value)) { Swal.fire({ icon: 'error', title: 'ข้อมูลไม่ถูกต้อง', text: 'กรุณากรอกเฉพาะตัวเลขเท่านั้นค่ะ', confirmButtonColor: 'var(--primary-pink)' }); licenseNumberInput.value = value.replace(/[^0-9]/g, ''); } });
             phoneNumberInput.addEventListener('blur', () => { const phone = phoneNumberInput.value; if (phone.length > 0 && (phone.length !== 10 || phone.charAt(0) !== '0')) { Swal.fire({ icon: 'error', title: 'เบอร์โทรศัพท์ไม่ถูกต้อง', text: 'กรุณากรอกเบอร์โทรศัพท์ 10 หลัก และขึ้นต้นด้วยเลข 0 ค่ะ', confirmButtonColor: 'var(--primary-pink)'}); } });
@@ -189,8 +237,7 @@
                 textInputs.forEach(el => { el.readOnly = this.checked; });
                 prefixButtons.forEach(el => { el.disabled = this.checked; });
             });
-        }
-        main();
+        });
     </script>
 </body>
 </html>
