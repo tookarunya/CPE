@@ -8,8 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
     <style>
+        /* === FINAL STABLE CSS === */
         :root {
             --primary-pink: #D18DA1; 
             --dark-gray: #5C5455;
@@ -17,31 +19,23 @@
             --disabled-gray: #CCCCCC;
             --background-white: #FCFBFB;
         }
-        /* --- CSS สำหรับ Loading Spinner --- */
+
+        /* --- CSS for Loading Spinner --- */
         #loader {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            background: rgba(255, 255, 255, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: fixed; left: 0; top: 0; width: 100%; height: 100%;
+            z-index: 9999; background: rgba(255, 255, 255, 0.8);
+            display: flex; justify-content: center; align-items: center;
         }
         .spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid var(--primary-pink);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            border: 8px solid #f3f3f3; border-top: 8px solid var(--primary-pink);
+            border-radius: 50%; width: 60px; height: 60px;
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* (The rest of the CSS is the same...) */
         body {
             font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; background-color: var(--background-white);
             display: flex; justify-content: center; align-items: flex-start;
@@ -52,26 +46,22 @@
         .header-text { text-align: center; margin-bottom: 30px; }
         .header-text h1 { font-size: 1.5rem; color: var(--dark-gray); margin-bottom: 5px; font-weight: 400; }
         .header-text h2 { font-size: 2.2rem; color: var(--dark-gray); margin-top: 0; font-weight: 600; }
-
         .profile-card {
             display: flex; align-items: center; background-color: #FFFFFF; padding: 15px 20px;
             border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05); margin-bottom: 30px;
         }
         .profile-avatar img { width: 60px; height: 60px; border-radius: 50%; margin-right: 15px; object-fit: cover; }
         .profile-info p { margin: 0; font-size: 0.95rem; line-height: 1.5; }
-
         .registration-form { background-color: #FFFFFF; padding: 25px 30px; border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.03); }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 600; }
         .required-star { color: red; font-size: 1.1rem; margin-left: 2px;}
-
         .form-group input {
             width: 100%; padding: 12px 15px; border: 1px solid var(--light-gray); border-radius: 8px;
             font-size: 1rem; color: var(--dark-gray); box-sizing: border-box; transition: all 0.2s ease-in-out;
         }
         .form-group input:focus { outline: none; border-color: var(--primary-pink); box-shadow: 0 0 5px rgba(209, 141, 161, 0.5); }
         .form-group input:disabled, .form-group input[readonly] { background-color: #F5F5F5; cursor: not-allowed; }
-
         .prefix-buttons { display: flex; gap: 10px; }
         .prefix-btn {
             flex: 1; padding: 12px; border: 1px solid var(--light-gray); border-radius: 8px;
@@ -81,13 +71,10 @@
         .prefix-btn:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .prefix-btn.active { background-color: var(--primary-pink); color: white; border-color: var(--primary-pink); }
         .prefix-btn:disabled { background-color: var(--disabled-gray); transform: none; box-shadow: none; cursor: not-allowed; color: #888; border-color: var(--disabled-gray); }
-
         .prefix-btn.active:disabled { background-color: var(--primary-pink); opacity: 0.6; color: white; }
-        
         .checkbox-group { display: flex; align-items: center; margin-top: 25px; margin-bottom: 30px; }
         .checkbox-group input[type="checkbox"] { margin-right: 10px; width: 18px; height: 18px; }
         .checkbox-group label { font-size: 1rem; cursor: pointer; }
-
         .submit-button {
             width: 100%; padding: 15px 20px; background-color: var(--primary-pink); color: white;
             border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600;
@@ -95,7 +82,6 @@
         }
         .submit-button:hover { background-color: #C17C8E; }
         .submit-button:disabled { background-color: var(--disabled-gray); cursor: not-allowed; transform: none; box-shadow: none; }
-        
         .footer {
             margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: #6B7280;
         }
@@ -105,6 +91,7 @@
         .footer a:hover {
             text-decoration: underline;
         }
+
     </style>
 </head>
 <body>
@@ -113,10 +100,8 @@
     </div>
 
     <div class="container" style="display: none;">
-        </div>
-    <div class="container">
         <header class="header-text">
-            <h1>คณะเภสัชศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย</h1>
+             <h1>คณะเภสัชศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย</h1>
             <h2>ลงทะเบียนนิสิตเก่า</h2>
         </header>
 
@@ -128,14 +113,13 @@
                 <p><strong>ชื่อโปรไฟล์ LINE:</strong> <span id="lineDisplayName">กำลังโหลดข้อมูล...</span></p>
             </div>
         </div>
-
+        
         <form id="loginForm" name="google-sheet">
             <input type="hidden" id="timestamp" name="Timestamp">
             <input type="hidden" id="uid" name="Uid">
             <input type="hidden" id="uname" name="UName">
             <input type="hidden" id="upic" name="Upic">
             <input type="hidden" id="approve" name="Approve" value="">
-
             <div class="form-group">
                 <label>คำนำหน้า:<span class="required-star">*</span></label>
                 <div class="prefix-buttons">
@@ -164,12 +148,10 @@
                 <label for="number3">อีเมล:</label>
                 <input type="email" id="number3" name="number3" placeholder="(ไม่บังคับ) กรอกอีเมล">
             </div>
-
             <div class="checkbox-group">
                 <input type="checkbox" id="confirmData" name="confirmData" required>
                 <label for="confirmData">ยืนยันข้อมูลถูกต้อง<span class="required-star">*</span></label>
             </div>
-
             <button type="submit" id="submitButton" class="submit-button" disabled>ยืนยันการลงทะเบียน</button>
         </form>
         
@@ -179,37 +161,52 @@
         </div>
     </div>
 
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-        async function main() {
-            try {
-                await liff.init({ liffId: "1661318361-NqOjOrRd" }); // <-- *** ใส่ LIFF ID ที่ถูกต้อง ***
-            } catch (err) { /* Error handling */ return; }
-            if (!liff.isLoggedIn()) { liff.login({ redirectUri: window.location.href }); return; }
-            try {
-                const profile = await liff.getProfile();
-                document.getElementById('lineProfilePicture').src = profile.pictureUrl || 'https://via.placeholder.com/60x60/f0e0e0/806060?text=👤';
-                document.getElementById('lineDisplayName').textContent = profile.displayName;
-                document.getElementById('uid').value = profile.userId;
-                document.getElementById('uname').value = profile.displayName;
-                document.getElementById('upic').value = profile.pictureUrl || '';
-            .then(profile => {
-                // ... (โค้ดดึงโปรไฟล์) ...
-                document.getElementById('upic').value = profile.pictureUrl || '';
+        document.addEventListener('DOMContentLoaded', function() {
+            const loader = document.getElementById('loader');
+            const container = document.querySelector('.container');
 
-                // --- เพิ่ม 2 บรรทัดนี้ ---
-                document.getElementById('loader').style.display = 'none';
-                document.querySelector('.container').style.display = 'block';
-            })
+            // --- 3. LIFF Initialization with Full Error Handling ---
+            liff.init({ liffId: "YOUR_LIFF_ID_HERE" }) // <-- *** ใส่ LIFF ID ที่ถูกต้อง ***
+                .then(() => {
+                    if (!liff.isLoggedIn()) {
+                        liff.login();
+                        return; // Stop execution, will redirect
+                    }
+                    liff.getProfile()
+                        .then(profile => {
+                            // --- SUCCESS: Profile data is fetched ---
+                            // 1. Update the UI with profile data
+                            document.getElementById('lineProfilePicture').src = profile.pictureUrl || 'https://via.placeholder.com/60x60/f0e0e0/806060?text=👤';
+                            document.getElementById('lineDisplayName').textContent = profile.displayName;
+                            document.getElementById('uid').value = profile.userId;
+                            document.getElementById('uname').value = profile.displayName;
+                            document.getElementById('upic').value = profile.pictureUrl || '';
+                            
+                            // 2. Hide the spinner and show the main content
+                            loader.style.display = 'none';
+                            container.style.display = 'block';
+                        })
+                        .catch(err => {
+                            // --- ERROR getting profile ---
+                            console.error("Get Profile Error:", err);
+                            loader.style.display = 'none'; // Hide spinner
+                            Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลโปรไฟล์ LINE ได้ กรุณาลองอีกครั้ง', 'error');
+                        });
+                })
+                .catch(err => {
+                    // --- ERROR initializing LIFF ---
+                    console.error("LIFF Init Error:", err);
+                    loader.style.display = 'none'; // Hide spinner
+                    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับ LIFF ได้ กรุณาตรวจสอบ LIFF ID', 'error');
+                });
 
-
-                
-            } catch(err) { /* Error handling */ }
-            
+            // (The rest of the script is the same stable version)
             const form = document.getElementById('loginForm');
             const submitButton = document.getElementById('submitButton');
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbw-B7GIR7mMTcW4EhNTTU1-wfNQVo2uIwuDS88rnNdjVdptSKSvF05bGwZqluLdzXDNcQ/exec'; // <-- *** ใส่ URL ของ Apps Script ***
-
+            const confirmCheckbox = document.getElementById('confirmData');
+            
+            const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
             form.addEventListener('submit', e => {
                 e.preventDefault();
                 document.getElementById('timestamp').value = new Date().toISOString();
@@ -222,9 +219,8 @@
                         Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
                         fetch(scriptURL, { method: 'POST', body: new FormData(form)})
                             .then(response => {
-                                // ไม่ต้องแสดง SweetAlert สำเร็จ แค่ปิดหน้าต่างไปเลย
-                                // ข้อความยืนยันจะถูกส่งจากหลังบ้าน (Apps Script)
-                                if (liff) liff.closeWindow();
+                                Swal.fire({ title: 'ลงทะเบียนสำเร็จ!', text: 'ขอบคุณที่ให้ข้อมูลค่ะ', icon: 'success', confirmButtonColor: 'var(--primary-pink)'})
+                                .then(() => { if (liff) liff.closeWindow(); });
                             })
                             .catch(error => {
                                 Swal.fire({ title: 'เกิดข้อผิดพลาด!', text: 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง', icon: 'error', confirmButtonColor: 'var(--primary-pink)'});
@@ -234,8 +230,8 @@
                 });
             });
 
-            // (ส่วน Validation และ Event Listeners อื่นๆ เหมือนเดิม)
-            const prefixButtons = document.querySelectorAll('.prefix-btn'); const prefixInput = document.getElementById('number2'); const phoneNumberInput = document.getElementById('tel'); const licenseNumberInput = document.getElementById('number1'); const confirmCheckbox = document.getElementById('confirmData');
+            // (Validation and other event listeners)
+            const prefixButtons = document.querySelectorAll('.prefix-btn'); const prefixInput = document.getElementById('number2'); const phoneNumberInput = document.getElementById('tel'); const licenseNumberInput = document.getElementById('number1');
             prefixButtons.forEach(button => { button.addEventListener('click', () => { prefixButtons.forEach(btn => btn.classList.remove('active')); button.classList.add('active'); prefixInput.value = button.dataset.value; }); });
             licenseNumberInput.addEventListener('input', () => { const value = licenseNumberInput.value; if (/[^0-9]/.test(value)) { Swal.fire({ icon: 'error', title: 'ข้อมูลไม่ถูกต้อง', text: 'กรุณากรอกเฉพาะตัวเลขเท่านั้นค่ะ', confirmButtonColor: 'var(--primary-pink)' }); licenseNumberInput.value = value.replace(/[^0-9]/g, ''); } });
             phoneNumberInput.addEventListener('blur', () => { const phone = phoneNumberInput.value; if (phone.length > 0 && (phone.length !== 10 || phone.charAt(0) !== '0')) { Swal.fire({ icon: 'error', title: 'เบอร์โทรศัพท์ไม่ถูกต้อง', text: 'กรุณากรอกเบอร์โทรศัพท์ 10 หลัก และขึ้นต้นด้วยเลข 0 ค่ะ', confirmButtonColor: 'var(--primary-pink)'}); } });
@@ -248,8 +244,7 @@
                 textInputs.forEach(el => { el.readOnly = this.checked; });
                 prefixButtons.forEach(el => { el.disabled = this.checked; });
             });
-        }
-        main();
+        });
     </script>
 </body>
 </html>
