@@ -11,6 +11,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
     <style>
+        /* === FINAL STABLE CSS === */
         :root {
             --primary-pink: #D18DA1; 
             --dark-gray: #5C5455;
@@ -18,6 +19,8 @@
             --disabled-gray: #CCCCCC;
             --background-white: #FCFBFB;
         }
+
+        /* --- CSS for Loading Spinner --- */
         #loader {
             position: fixed; left: 0; top: 0; width: 100%; height: 100%;
             z-index: 9999; background: rgba(255, 255, 255, 0.8);
@@ -28,12 +31,17 @@
             border-radius: 50%; width: 60px; height: 60px;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* (The rest of the CSS is the same...) */
         body {
             font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; background-color: var(--background-white);
             display: flex; justify-content: center; align-items: flex-start;
             min-height: 100vh; color: var(--dark-gray);
         }
+
         .container { width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; margin-top: 40px; margin-bottom: 40px;}
         .header-text { text-align: center; margin-bottom: 30px; }
         .header-text h1 { font-size: 1.5rem; color: var(--dark-gray); margin-bottom: 5px; font-weight: 400; }
@@ -83,23 +91,29 @@
         .footer a:hover {
             text-decoration: underline;
         }
+
     </style>
 </head>
 <body>
-    <div id="loader"><div class="spinner"></div></div>
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
     <div class="container" style="display: none;">
         <header class="header-text">
+            <h1>คณะเภสัชศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย</h1>
             <h2>ลงทะเบียนนิสิตเก่า</h2>
-            <h1>คณะเภสัชศาสตร์<br>จุฬาลงกรณ์มหาวิทยาลัย</h1>
         </header>
+
         <div class="profile-card">
             <div class="profile-avatar">
                 <img id="lineProfilePicture" src="https://via.placeholder.com/60x60/f0e0e0/806060?text=👤" alt="Profile Avatar">
             </div>
             <div class="profile-info">
-                <p><strong>ชื่อโปรไฟล์ LINE:</strong> <span id="lineDisplayName">[กำลังโหลดข้อมูล.....]</span></p>
+                <p><strong>ชื่อโปรไฟล์ LINE:</strong> <span id="lineDisplayName">[กรุณา Login ผ่าน LINE]</span></p>
             </div>
         </div>
+        
         <form id="loginForm" name="google-sheet">
             <input type="hidden" id="timestamp" name="Timestamp">
             <input type="hidden" id="uid" name="Uid">
@@ -140,17 +154,19 @@
             </div>
             <button type="submit" id="submitButton" class="submit-button" disabled>ยืนยันการลงทะเบียน</button>
         </form>
+        
         <div class="footer">
             <p>พบปัญหาหรือต้องการแก้ไขข้อมูล? <a href="https://lin.ee/m3C60cv">ติดต่อเจ้าหน้าที่</a></p>
             <p>ติดต่อฝ่ายไอที: <a href="tel:022188288">02-218-8288</a></p>
         </div>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loader = document.getElementById('loader');
             const container = document.querySelector('.container');
 
-            // --- LIFF Initialization with Full Error Handling ---
+            // --- 3. LIFF Initialization with Full Error Handling ---
             liff.init({ liffId: "1661318361-NqOjOrRd" }) // <-- *** ใส่ LIFF ID ที่ถูกต้อง ***
                 .then(() => {
                     if (!liff.isLoggedIn()) {
@@ -160,12 +176,14 @@
                     liff.getProfile()
                         .then(profile => {
                             // --- SUCCESS: Profile data is fetched ---
+                            // 1. Update the UI with profile data
                             document.getElementById('lineProfilePicture').src = profile.pictureUrl || 'https://via.placeholder.com/60x60/f0e0e0/806060?text=👤';
                             document.getElementById('lineDisplayName').textContent = profile.displayName;
                             document.getElementById('uid').value = profile.userId;
                             document.getElementById('uname').value = profile.displayName;
                             document.getElementById('upic').value = profile.pictureUrl || '';
                             
+                            // 2. Hide the spinner and show the main content
                             loader.style.display = 'none';
                             container.style.display = 'block';
                         })
