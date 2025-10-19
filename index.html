@@ -149,85 +149,130 @@
 
     
 <script>
-        // === JAVASCRIPT เวอร์ชันแก้ไข Spinner ค้าง (ยึดตามไฟล์ 681019-1111-index.docx) ===
-        document.addEventListener('DOMContentLoaded', function() {
-            const loader = document.getElementById('loader');
-            const container = document.querySelector('.container');
+document.addEventListener('DOMContentLoaded', function() {
+    const loader = document.getElementById('loader');
+    const container = document.querySelector('.container');
+    const form = document.getElementById('loginForm');
+    const submitButton = document.getElementById('submitButton');
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxJOpAYnEPX2xESW-cFgqNQkkDBv80oe7WmewSvOa2xC6qrFab4rJDQL7Hs6njtNWH8pw/exec';
 
-            // --- FIX: เพิ่ม "นาฬิกาจับเวลา" (Timeout) และรวม .then() ให้กระชับขึ้น ---
-            const liffPromise = liff.init({ liffId: "1661318361-NqOjOrRd" }); // <-- LIFF ID จากไฟล์ของคุณ
-            const timeoutPromise = new Promise((resolve, reject) => {
-                setTimeout(() => reject(new Error('LIFF initialization timed out')), 10000); // 10 วินาที
+    // --- เริ่มส่วนที่แก้ไข ---
+    async function initializeLiff() {
+        try {
+            await liff.init({ liffId: "1661318361-NqOjOrRd" }); // <-- *** ใส่ LIFF ID ที่ถูกต้อง ***
+
+            if (!liff.isLoggedIn()) {
+                // ถ้ายังไม่ล็อกอิน จะเปิดหน้าล็อกอินของ LINE
+                // เมื่อล็อกอินเสร็จและกลับมาที่หน้า LIFF App ใหม่ โค้ดจะเริ่มทำงานอีกครั้ง
+                liff.login();
+                return; // หยุดการทำงานส่วนที่เหลือชั่วคราว
+            }
+
+            // ดึงข้อมูลโปรไฟล์
+            const profile = await liff.getProfile();
+
+            // นำข้อมูลโปรไฟล์ไปแสดงผล
+            document.getElementById('lineProfilePicture').src = profile.pictureUrl || 'https://via.placeholder.com/60x60/f0e0e0/806060?text= 👤 ';
+            document.getElementById('lineDisplayName').textContent = profile.displayName;
+            document.getElementById('uid').value = profile.userId;
+            document.getElementById('uname').value = profile.displayName;
+            document.getElementById('upic').value = profile.pictureUrl || '';
+
+            // เมื่อทุกอย่างเรียบร้อย ให้ซ่อน Spinner และแสดงฟอร์ม
+            loader.style.display = 'none';
+            container.style.display = 'block';
+
+        } catch (error) {
+            console.error(error);
+            // ไม่ว่าจะเกิดข้อผิดพลาดอะไรขึ้น ให้ซ่อน Spinner ก่อน
+            loader.style.display = 'none';
+            Swal.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาด',
+                text: 'ไม่สามารถเริ่มต้น LIFF หรือดึงข้อมูลโปรไฟล์ได้ กรุณาลองใหม่อีกครั้ง',
+                confirmButtonColor: 'var(--primary-pink)'
             });
+        }
+    }
 
-            Promise.race([liffPromise, timeoutPromise])
-                .then(() => {
-                    if (!liff.isLoggedIn()) {
-                        liff.login(); 
-                        return Promise.reject('Not logged in'); // หยุดการทำงานต่อ
-                    }
-                    return liff.getProfile();
-                })
-                .then(profile => {
-                    if (profile) {
-                        document.getElementById('lineProfilePicture').src = profile.pictureUrl || 'https://via.placeholder.com/60x60/f0e0e0/806060?text=👤';
-                        document.getElementById('lineDisplayName').textContent = profile.displayName;
-                        document.getElementById('uid').value = profile.userId;
-                        document.getElementById('uname').value = profile.displayName;
-                        document.getElementById('upic').value = profile.pictureUrl || '';
-                        
-                        loader.style.display = 'none';
-                        container.style.display = 'block';
-                    }
-                })
-                .catch(err => {
-                    if (err.message !== 'Not logged in') { // ไม่ต้องแสดง Error ถ้าแค่กำลัง redirect ไปหน้า login
-                        console.error("LIFF/Profile Error:", err);
-                        loader.style.display = 'none';
-                        Swal.fire('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและลองอีกครั้ง', 'error');
-                    }
-                });
-            
-            // (โค้ดส่วนที่เหลือเหมือนเดิมทุกประการจากไฟล์ 681019-1111-index.docx)
-            const form = document.getElementById('loginForm');
-            const submitButton = document.getElementById('submitButton');
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbxJOpAYnEPX2xESW-cFgqNQkkDBv80oe7WmewSvOa2xC6qrFab4rJDQL7Hs6njtNWH8pw/exec'; // <-- URL จากไฟล์ของคุณ
-            form.addEventListener('submit', e => {
-                e.preventDefault();
-                document.getElementById('timestamp').value = new Date().toISOString();
+    initializeLiff();
+    // --- จบส่วนที่แก้ไข ---
+
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        document.getElementById('timestamp').value = new Date().toISOString();
+        Swal.fire({
+            title: 'ยืนยันการส่งข้อมูล?',
+            text: "กรุณาตรวจสอบข้อมูลก่อนกดยืนยัน",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: 'var(--primary-pink)',
+            cancelButtonColor: '#888',
+            confirmButtonText: 'ยืนยัน',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 Swal.fire({
-                    title: 'ยืนยันการส่งข้อมูล?', text: "กรุณาตรวจสอบข้อมูลก่อนกดยืนยัน", icon: 'question',
-                    showCancelButton: true, confirmButtonColor: 'var(--primary-pink)', cancelButtonColor: '#888',
-                    confirmButtonText: 'ยืนยัน', cancelButtonText: 'ยกเลิก'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
-                        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-                            .then(response => {
-                                if (liff) liff.closeWindow();
-                            })
-                            .catch(error => {
-                                Swal.fire({ title: 'เกิดข้อผิดพลาด!', text: 'ไม่สามารถบันทึกข้อมูลได้', 'error'});
-                            });
-                    }
+                    title: 'กำลังบันทึกข้อมูล...',
+                    text: 'กรุณารอสักครู่',
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading() }
                 });
-            });
-            const confirmCheckbox = document.getElementById('confirmData');
-            const prefixButtons = document.querySelectorAll('.prefix-btn'); const prefixInput = document.getElementById('number2'); const phoneNumberInput = document.getElementById('tel'); const licenseNumberInput = document.getElementById('number1');
-            prefixButtons.forEach(button => { button.addEventListener('click', () => { prefixButtons.forEach(btn => btn.classList.remove('active')); button.classList.add('active'); prefixInput.value = button.dataset.value; }); });
-            licenseNumberInput.addEventListener('input', () => { const value = licenseNumberInput.value; if (/[^0-9]/.test(value)) { Swal.fire({ icon: 'error', title: 'ข้อมูลไม่ถูกต้อง', text: 'กรุณากรอกเฉพาะตัวเลขเท่านั้นค่ะ'}); licenseNumberInput.value = value.replace(/[^0-9]/g, ''); } });
-            phoneNumberInput.addEventListener('blur', () => { const phone = phoneNumberInput.value; if (phone.length > 0 && (phone.length !== 10 || phone.charAt(0) !== '0')) { Swal.fire({ icon: 'error', title: 'เบอร์โทรศัพท์ไม่ถูกต้อง', text: 'กรุณากรอกเบอร์โทรศัพท์ 10 หลัก'}); } });
-            function isFormFullyValid() { const requiredInputs = form.querySelectorAll('[required]'); let isAllValid = Array.from(requiredInputs).every(input => { if (input.type === 'checkbox') return input.checked; return input.value.trim() !== ''; }); const phone = phoneNumberInput.value; if (isAllValid && (phone.length !== 10 || phone.charAt(0) !== '0')) { isAllValid = false; } return isAllValid; }
-            form.addEventListener('input', () => { submitButton.disabled = !isFormFullyValid(); });
-            confirmCheckbox.addEventListener('change', function() {
-                const textInputs = form.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"]');
-                const prefixButtons = document.querySelectorAll('.prefix-btn');
-                if (this.checked) { if (!isFormFullyValid()) { Swal.fire({ icon: 'warning', title: 'ข้อมูลยังไม่ครบถ้วน', text: 'กรุณากรอกข้อมูล * ให้ครบถ้วนก่อน'}); this.checked = false; return; } }
-                textInputs.forEach(el => { el.readOnly = this.checked; });
-                prefixButtons.forEach(el => { el.disabled = this.checked; });
-            });
+                fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+                    .then(response => {
+                        // เมื่อสำเร็จ แค่ปิดหน้าต่าง (ข้อความยืนยันจะถูกส่งจากหลังบ้านเอง)
+                        if (liff) liff.closeWindow();
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'เกิดข้อผิดพลาด!',
+                            text: 'ไม่สามารถบันทึกข้อมูลได้',
+                            icon: 'error',
+                            confirmButtonColor: 'var(--primary-pink)'
+                        });
+                    });
+            }
         });
-    </script>
+    });
+
+    // (Validation and other event listeners) - ส่วนนี้เหมือนเดิม
+    const confirmCheckbox = document.getElementById('confirmData');
+    const prefixButtons = document.querySelectorAll('.prefix-btn');
+    const prefixInput = document.getElementById('number2');
+    const phoneNumberInput = document.getElementById('tel');
+    const licenseNumberInput = document.getElementById('number1');
+    prefixButtons.forEach(button => { button.addEventListener('click', () => { prefixButtons.forEach(btn => btn.classList.remove('active')); button.classList.add('active'); prefixInput.value = button.dataset.value; }); });
+    licenseNumberInput.addEventListener('input', () => { const value = licenseNumberInput.value; if (/[^0-9]/.test(value)) { Swal.fire({ icon: 'error', title: 'ข้อมูลไม่ถูกต้อง', text: 'กรุณากรอกเฉพาะตัวเลขเท่านั้นค่ะ' }); licenseNumberInput.value = value.replace(/[^0-9]/g, ''); } });
+    phoneNumberInput.addEventListener('blur', () => { const phone = phoneNumberInput.value; if (phone.length > 0 && (phone.length !== 10 || phone.charAt(0) !== '0')) { Swal.fire({ icon: 'error', title: 'เบอร์โทรศัพท์ไม่ถูกต้อง', text: 'กรุณากรอกเบอร์โทรศัพท์ 10 หลัก' }); } });
+    function isFormFullyValid() {
+        const requiredInputs = form.querySelectorAll('[required]');
+        let isAllValid = Array.from(requiredInputs).every(input => {
+            if (input.type === 'checkbox') return input.checked;
+            return input.value.trim() !== '';
+        });
+        const phone = phoneNumberInput.value;
+        if (isAllValid && (phone.length !== 10 || phone.charAt(0) !== '0')) {
+            isAllValid = false;
+        }
+        return isAllValid;
+    }
+    form.addEventListener('input', () => { submitButton.disabled = !isFormFullyValid(); });
+    confirmCheckbox.addEventListener('change', function() {
+        const textInputs = form.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"]');
+        const prefixButtons = form.querySelectorAll('.prefix-btn');
+        if (this.checked) {
+            if (!isFormFullyValid()) {
+                Swal.fire({ icon: 'warning', title: 'ข้อมูลยังไม่ครบถ้วน', text: 'กรุณากรอกข้อมูล * ให้ครบถ้วนก่อน' });
+                this.checked = false;
+                return;
+            }
+        }
+        textInputs.forEach(el => { el.readOnly = this.checked; });
+        prefixButtons.forEach(el => { el.disabled = this.checked; });
+    });
+});
+</script>
 
 
     
