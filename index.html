@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-
+    
     <style>
         :root {
             --primary-pink: #D18DA1; 
@@ -116,15 +116,15 @@
             </div>
             <div class="form-group">
                 <label for="number4">ชื่อ:<span class="required-star">*</span></label>
-                <input type="text" id="number4" name="number4" placeholder="กรอก..ชื่อ (ไทย-ไม่ต้องใส่คำนำหน้า)" required>
+                <input type="text" id="number4" name="number4" placeholder="กรอกชื่อจริง (ภาษาไทย)" required>
             </div>
             <div class="form-group">
                 <label for="number5">นามสกุล:<span class="required-star">*</span></label>
-                <input type="text" id="number5" name="number5" placeholder="กรอก..นามสกุล (ไทย)" required>
+                <input type="text" id="number5" name="number5" placeholder="กรอกนามสกุล (ภาษาไทย)" required>
             </div>
             <div class="form-group">
                 <label for="number1">เลขใบประกอบวิชาชีพ:<span class="required-star">*</span></label>
-                <input type="tel" id="number1" name="number1" placeholder="กรอก..เลข ภ." required>
+                <input type="tel" id="number1" name="number1" placeholder="กรอกเฉพาะตัวเลข" required>
             </div>
             <div class="form-group">
                 <label for="tel">เบอร์โทรศัพท์:<span class="required-star">*</span></label>
@@ -132,7 +132,7 @@
             </div>
             <div class="form-group">
                 <label for="number3">อีเมล:</label>
-                <input type="email" id="number3" name="number3" placeholder="กรอก..อีเมล">
+                <input type="email" id="number3" name="number3" placeholder="(ไม่บังคับ) กรอกอีเมล">
             </div>
             <div class="checkbox-group">
                 <input type="checkbox" id="confirmData" name="confirmData" required>
@@ -146,47 +146,39 @@
         </div>
     </div>
     <script>
-        async function main() {
+        document.addEventListener('DOMContentLoaded', function() {
             const loader = document.getElementById('loader');
             const container = document.querySelector('.container');
 
-            try {
-                // --- FIX: เพิ่ม "นาฬิกาจับเวลา" (Timeout) ---
-                const liffPromise = liff.init({ liffId: "1661318361-NqOjOrRd" });
-                const timeoutPromise = new Promise((resolve, reject) => {
-                    setTimeout(() => reject(new Error('LIFF initialization timed out after 10 seconds')), 10000);
+            liff.init({ liffId: "1661318361-NqOjOrRd" }) // <-- *** ใส่ LIFF ID ที่ถูกต้อง ***
+                .then(() => {
+                    if (!liff.isLoggedIn()) {
+                        liff.login(); return;
+                    }
+                    liff.getProfile()
+                        .then(profile => {
+                            document.getElementById('lineProfilePicture').src = profile.pictureUrl || 'https://via.placeholder.com/60x60/f0e0e0/806060?text=👤';
+                            document.getElementById('lineDisplayName').textContent = profile.displayName;
+                            document.getElementById('uid').value = profile.userId;
+                            document.getElementById('uname').value = profile.displayName;
+                            document.getElementById('upic').value = profile.pictureUrl || '';
+                            
+                            loader.style.display = 'none';
+                            container.style.display = 'block';
+                        })
+                        .catch(err => {
+                            loader.style.display = 'none';
+                            Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลโปรไฟล์ LINE ได้', 'error');
+                        });
+                })
+                .catch(err => {
+                    loader.style.display = 'none';
+                    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับ LIFF ได้', 'error');
                 });
 
-                await Promise.race([liffPromise, timeoutPromise]);
-
-                if (!liff.isLoggedIn()) {
-                    liff.login({ redirectUri: window.location.href });
-                    return;
-                }
-
-                const profile = await liff.getProfile();
-                
-                // --- SUCCESS: ทำงานส่วนที่เหลือตามปกติ ---
-                document.getElementById('lineProfilePicture').src = profile.pictureUrl || 'https://via.placeholder.com/60x60/f0e0e0/806060?text=👤';
-                document.getElementById('lineDisplayName').textContent = profile.displayName;
-                document.getElementById('uid').value = profile.userId;
-                document.getElementById('uname').value = profile.displayName;
-                document.getElementById('upic').value = profile.pictureUrl || '';
-                
-                loader.style.display = 'none';
-                container.style.display = 'block';
-
-            } catch (err) {
-                // --- ERROR: ถ้า liff.init() ไม่สำเร็จ หรือหมดเวลา ---
-                console.error("LIFF Initialization or Profile Error:", err);
-                loader.style.display = 'none'; // ซ่อน Spinner
-                Swal.fire('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและลองอีกครั้ง', 'error');
-            }
-
-            // (ส่วนของโค้ดที่เหลือเหมือนเดิมทุกประการ)
             const form = document.getElementById('loginForm');
             const submitButton = document.getElementById('submitButton');
-            const scriptURL = 'https://script.google.com/a/macros/pharm.chula.ac.th/s/AKfycbxJOpAYnEPX2xESW-cFgqNQkkDBv80oe7WmewSvOa2xC6qrFab4rJDQL7Hs6njtNWH8pw/exec';
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxJOpAYnEPX2xESW-cFgqNQkkDBv80oe7WmewSvOa2xC6qrFab4rJDQL7Hs6njtNWH8pw/exec';
             form.addEventListener('submit', e => {
                 e.preventDefault();
                 document.getElementById('timestamp').value = new Date().toISOString();
@@ -199,6 +191,7 @@
                         Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
                         fetch(scriptURL, { method: 'POST', body: new FormData(form)})
                             .then(response => {
+                                // เมื่อสำเร็จ แค่ปิดหน้าต่าง (ข้อความยืนยันจะถูกส่งจากหลังบ้านเอง)
                                 if (liff) liff.closeWindow();
                             })
                             .catch(error => {
@@ -207,6 +200,8 @@
                     }
                 });
             });
+
+            // (Validation and other event listeners)
             const confirmCheckbox = document.getElementById('confirmData');
             const prefixButtons = document.querySelectorAll('.prefix-btn'); const prefixInput = document.getElementById('number2'); const phoneNumberInput = document.getElementById('tel'); const licenseNumberInput = document.getElementById('number1');
             prefixButtons.forEach(button => { button.addEventListener('click', () => { prefixButtons.forEach(btn => btn.classList.remove('active')); button.classList.add('active'); prefixInput.value = button.dataset.value; }); });
@@ -221,8 +216,7 @@
                 textInputs.forEach(el => { el.readOnly = this.checked; });
                 prefixButtons.forEach(el => { el.disabled = this.checked; });
             });
-        }
-        main();
+        });
     </script>
 </body>
 </html>
