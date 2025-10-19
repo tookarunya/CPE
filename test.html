@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LIFF Connection Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+    <h1>กำลังทดสอบการเชื่อมต่อ LIFF...</h1>
+    <script>
+        async function main() {
+            try {
+                // ใส่ LIFF ID ตัวเดียวกับที่คุณใช้ใน index.html
+                await liff.init({ liffId: "1661318361-NqOjOrRd" }); 
+                
+                // ถ้า init สำเร็จ จะแสดง Alert นี้
+                alert("เชื่อมต่อ LIFF สำเร็จ! OS ของคุณคือ: " + liff.getOS());
+
+            } catch (err) {
+                // ถ้า init ไม่สำเร็จ จะแสดง Alert นี้
+                console.error("LIFF Init Test Error:", err);
+                alert("เชื่อมต่อ LIFF ไม่สำเร็จ! Error: " + err.message);
+            }
+        }
+        main();
+    </script>
+</body>
+</html>
