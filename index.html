@@ -145,6 +145,7 @@
             <p>ติดต่อฝ่ายไอที: <a href="tel:022188288">02-218-8288</a></p>
         </div>
     </div>
+
 <script>
         // === JAVASCRIPT เวอร์ชันแก้ไข Spinner ค้าง (ยึดตามไฟล์ 681019-1111-index.docx) ===
         document.addEventListener('DOMContentLoaded', function() {
@@ -152,7 +153,7 @@
             const container = document.querySelector('.container');
 
             // --- FIX: เพิ่ม "นาฬิกาจับเวลา" (Timeout) และรวม .then() ให้กระชับขึ้น ---
-            const liffPromise = liff.init({ liffId: "1661318361-NqOjOrRd" });
+            const liffPromise = liff.init({ liffId: "1661318361-NqOjOrRd" }); // <-- LIFF ID จากไฟล์ของคุณ
             const timeoutPromise = new Promise((resolve, reject) => {
                 setTimeout(() => reject(new Error('LIFF initialization timed out')), 10000); // 10 วินาที
             });
@@ -178,7 +179,7 @@
                     }
                 })
                 .catch(err => {
-                    if (err !== 'Not logged in') { // ไม่ต้องแสดง Error ถ้าแค่กำลัง redirect ไปหน้า login
+                    if (err.message !== 'Not logged in') { // ไม่ต้องแสดง Error ถ้าแค่กำลัง redirect ไปหน้า login
                         console.error("LIFF/Profile Error:", err);
                         loader.style.display = 'none';
                         Swal.fire('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและลองอีกครั้ง', 'error');
@@ -188,7 +189,7 @@
             // (โค้ดส่วนที่เหลือเหมือนเดิมทุกประการจากไฟล์ 681019-1111-index.docx)
             const form = document.getElementById('loginForm');
             const submitButton = document.getElementById('submitButton');
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbxJOpAYnEPX2xESW-cFgqNQkkDBv80oe7WmewSvOa2xC6qrFab4rJDQL7Hs6njtNWH8pw/exec';
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxJOpAYnEPX2xESW-cFgqNQkkDBv80oe7WmewSvOa2xC6qrFab4rJDQL7Hs6njtNWH8pw/exec'; // <-- URL จากไฟล์ของคุณ
             form.addEventListener('submit', e => {
                 e.preventDefault();
                 document.getElementById('timestamp').value = new Date().toISOString();
@@ -225,5 +226,6 @@
             });
         });
     </script>
+    
 </body>
 </html>
