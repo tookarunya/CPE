@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ลงทะเบียนนิสิตเก่า</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+    <style>
+        :root {
+            --primary-pink: #D18DA1; 
+            --dark-gray: #5C5455;
+            --light-gray: #DCDCDC;
+            --disabled-gray: #CCCCCC;
+            --background-white: #FCFBFB;
+        }
+        #loader {
+            position: fixed; left: 0; top: 0; width: 100%; height: 100%;
+            z-index: 9999; background: rgba(255, 255, 255, 0.8);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3; border-top: 8px solid var(--primary-pink);
+            border-radius: 50%; width: 60px; height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        body {
+            font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; background-color: var(--background-white);
+            display: flex; justify-content: center; align-items: flex-start;
+            min-height: 100vh; color: var(--dark-gray);
+        }
+        .container { width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; margin-top: 40px; margin-bottom: 40px;}
+        .header-text { text-align: center; margin-bottom: 30px; }
+        .header-text h1 { font-size: 1.5rem; color: var(--dark-gray); margin-bottom: 5px; font-weight: 400; }
+        .header-text h2 { font-size: 2.2rem; color: var(--dark-gray); margin-top: 0; font-weight: 600; }
+        .profile-card {
+            display: flex; align-items: center; background-color: #FFFFFF; padding: 15px 20px;
+            border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05); margin-bottom: 30px;
+        }
+        .profile-avatar img { width: 60px; height: 60px; border-radius: 50%; margin-right: 15px; object-fit: cover; }
+        .profile-info p { margin: 0; font-size: 0.95rem; line-height: 1.5; }
+        .registration-form { background-color: #FFFFFF; padding: 25px 30px; border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.03); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 600; }
+        .required-star { color: red; font-size: 1.1rem; margin-left: 2px;}
+        .form-group input {
+            width: 100%; padding: 12px 15px; border: 1px solid var(--light-gray); border-radius: 8px;
+            font-size: 1rem; color: var(--dark-gray); box-sizing: border-box; transition: all 0.2s ease-in-out;
+        }
+        .form-group input:focus { outline: none; border-color: var(--primary-pink); box-shadow: 0 0 5px rgba(209, 141, 161, 0.5); }
+        .form-group input:disabled, .form-group input[readonly] { background-color: #F5F5F5; cursor: not-allowed; }
+        .prefix-buttons { display: flex; gap: 10px; }
+        .prefix-btn {
+            flex: 1; padding: 12px; border: 1px solid var(--light-gray); border-radius: 8px;
+            background-color: #FFFFFF; color: var(--dark-gray); font-size: 1rem;
+            font-family: 'Sarabun', sans-serif; cursor: pointer; transition: all 0.2s ease-in-out;
+        }
+        .prefix-btn:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .prefix-btn.active { background-color: var(--primary-pink); color: white; border-color: var(--primary-pink); }
+        .prefix-btn:disabled { background-color: var(--disabled-gray); transform: none; box-shadow: none; cursor: not-allowed; color: #888; border-color: var(--disabled-gray); }
+        .prefix-btn.active:disabled { background-color: var(--primary-pink); opacity: 0.6; color: white; }
+        .checkbox-group { display: flex; align-items: center; margin-top: 25px; margin-bottom: 30px; }
+        .checkbox-group input[type="checkbox"] { margin-right: 10px; width: 18px; height: 18px; }
+        .checkbox-group label { font-size: 1rem; cursor: pointer; }
+        .submit-button {
+            width: 100%; padding: 15px 20px; background-color: var(--primary-pink); color: white;
+            border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600;
+            cursor: pointer; transition: background-color 0.3s ease;
+        }
+        .submit-button:hover { background-color: #C17C8E; }
+        .submit-button:disabled { background-color: var(--disabled-gray); cursor: not-allowed; transform: none; box-shadow: none; }
+        .footer {
+            margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: #6B7280;
+        }
+        .footer a {
+            font-weight: 600; color: var(--primary-pink);
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="loader"><div class="spinner"></div></div>
+    <div class="container" style="display: none;">
+        <header class="header-text">
+            <h2>ลงทะเบียนนิสิตเก่า</h2>
+            <h1>คณะเภสัชศาสตร์<br>จุฬาลงกรณ์มหาวิทยาลัย</h1>
+        </header>
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <img id="lineProfilePicture" src="https://via.placeholder.com/60x60/f0e0e0/806060?text=👤" alt="Profile Avatar">
+            </div>
+            <div class="profile-info">
+                <p><strong>ชื่อโปรไฟล์ LINE:</strong> <span id="lineDisplayName">[กำลังโหลด...]</span></p>
+            </div>
+        </div>
+        <form id="loginForm" name="google-sheet">
+            <input type="hidden" id="timestamp" name="Timestamp">
+            <input type="hidden" id="uid" name="Uid">
+            <input type="hidden" id="uname" name="UName">
+            <input type="hidden" id="upic" name="Upic">
+            <input type="hidden" id="approve" name="Approve" value="">
+            <div class="form-group">
+                <label>คำนำหน้า:<span class="required-star">*</span></label>
+                <div class="prefix-buttons">
+                    <button type="button" class="prefix-btn active" data-value="ภก.">ภก.</button>
+                    <button type="button" class="prefix-btn" data-value="ภญ.">ภญ.</button>
+                </div>
+                <input type="hidden" id="number2" name="number2" value="ภก.">
+            </div>
+            <div class="form-group">
+                <label for="number4">ชื่อ:<span class="required-star">*</span></label>
+                <input type="text" id="number4" name="number4" placeholder="กรอก..ชื่อ (ไทย-ไม่ต้องใส่คำนำหน้า)" required>
+            </div>
+            <div class="form-group">
+                <label for="number5">นามสกุล:<span class="required-star">*</span></label>
+                <input type="text" id="number5" name="number5" placeholder="กรอก..นามสกุล (ไทย)" required>
+            </div>
+            <div class="form-group">
+                <label for="number1">เลขใบประกอบวิชาชีพ:<span class="required-star">*</span></label>
+                <input type="tel" id="number1" name="number1" placeholder="กรอก..เลข ภ." required>
+            </div>
+            <div class="form-group">
+                <label for="tel">เบอร์โทรศัพท์:<span class="required-star">*</span></label>
+                <input type="tel" id="tel" name="tel" placeholder="ตัวเลข 10 หลัก ขึ้นต้นด้วย 0" maxlength="10" required>
+            </div>
+            <div class="form-group">
+                <label for="number3">อีเมล:</label>
+                <input type="email" id="number3" name="number3" placeholder="กรอก..อีเมล">
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="confirmData" name="confirmData" required>
+                <label for="confirmData">อนุญาตให้เก็บข้อมูลส่วนบุคคล<span class="required-star">*</span></label>
+            </div>
+            <button type="submit" id="submitButton" class="submit-button" disabled>ยืนยันการลงทะเบียน</button>
+        </form>
+        <div class="footer">
+            <p>พบปัญหา/ต้องการแก้ไขข้อมูล? <a href="https://lin.ee/dZvQnDx">ติดต่อเจ้าหน้าที่</a></p>
+            <p>ติดต่อฝ่ายไอที: <a href="tel:022188288">02-218-8288</a></p>
+        </div>
+    </div>
+    <script>
+        async function main() {
+            const loader = document.getElementById('loader');
+            const container = document.querySelector('.container');
+
+            try {
+                // --- FIX: เพิ่ม "นาฬิกาจับเวลา" (Timeout) ---
+                const liffPromise = liff.init({ liffId: "1661318361-NqOjOrRd" });
+                const timeoutPromise = new Promise((resolve, reject) => {
+                    setTimeout(() => reject(new Error('LIFF initialization timed out after 10 seconds')), 10000);
+                });
+
+                await Promise.race([liffPromise, timeoutPromise]);
+
+                if (!liff.isLoggedIn()) {
+                    liff.login({ redirectUri: window.location.href });
+                    return;
+                }
+
+                const profile = await liff.getProfile();
+                
+                // --- SUCCESS: ทำงานส่วนที่เหลือตามปกติ ---
+                document.getElementById('lineProfilePicture').src = profile.pictureUrl || 'https://via.placeholder.com/60x60/f0e0e0/806060?text=👤';
+                document.getElementById('lineDisplayName').textContent = profile.displayName;
+                document.getElementById('uid').value = profile.userId;
+                document.getElementById('uname').value = profile.displayName;
+                document.getElementById('upic').value = profile.pictureUrl || '';
+                
+                loader.style.display = 'none';
+                container.style.display = 'block';
+
+            } catch (err) {
+                // --- ERROR: ถ้า liff.init() ไม่สำเร็จ หรือหมดเวลา ---
+                console.error("LIFF Initialization or Profile Error:", err);
+                loader.style.display = 'none'; // ซ่อน Spinner
+                Swal.fire('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและลองอีกครั้ง', 'error');
+            }
+
+            // (ส่วนของโค้ดที่เหลือเหมือนเดิมทุกประการ)
+            const form = document.getElementById('loginForm');
+            const submitButton = document.getElementById('submitButton');
+            const scriptURL = 'https://script.google.com/a/macros/pharm.chula.ac.th/s/AKfycbxJOpAYnEPX2xESW-cFgqNQkkDBv80oe7WmewSvOa2xC6qrFab4rJDQL7Hs6njtNWH8pw/exec';
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                document.getElementById('timestamp').value = new Date().toISOString();
+                Swal.fire({
+                    title: 'ยืนยันการส่งข้อมูล?', text: "กรุณาตรวจสอบข้อมูลก่อนกดยืนยัน", icon: 'question',
+                    showCancelButton: true, confirmButtonColor: 'var(--primary-pink)', cancelButtonColor: '#888',
+                    confirmButtonText: 'ยืนยัน', cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+                        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                            .then(response => {
+                                if (liff) liff.closeWindow();
+                            })
+                            .catch(error => {
+                                Swal.fire({ title: 'เกิดข้อผิดพลาด!', text: 'ไม่สามารถบันทึกข้อมูลได้', 'error'});
+                            });
+                    }
+                });
+            });
+            const confirmCheckbox = document.getElementById('confirmData');
+            const prefixButtons = document.querySelectorAll('.prefix-btn'); const prefixInput = document.getElementById('number2'); const phoneNumberInput = document.getElementById('tel'); const licenseNumberInput = document.getElementById('number1');
+            prefixButtons.forEach(button => { button.addEventListener('click', () => { prefixButtons.forEach(btn => btn.classList.remove('active')); button.classList.add('active'); prefixInput.value = button.dataset.value; }); });
+            licenseNumberInput.addEventListener('input', () => { const value = licenseNumberInput.value; if (/[^0-9]/.test(value)) { Swal.fire({ icon: 'error', title: 'ข้อมูลไม่ถูกต้อง', text: 'กรุณากรอกเฉพาะตัวเลขเท่านั้นค่ะ'}); licenseNumberInput.value = value.replace(/[^0-9]/g, ''); } });
+            phoneNumberInput.addEventListener('blur', () => { const phone = phoneNumberInput.value; if (phone.length > 0 && (phone.length !== 10 || phone.charAt(0) !== '0')) { Swal.fire({ icon: 'error', title: 'เบอร์โทรศัพท์ไม่ถูกต้อง', text: 'กรุณากรอกเบอร์โทรศัพท์ 10 หลัก'}); } });
+            function isFormFullyValid() { const requiredInputs = form.querySelectorAll('[required]'); let isAllValid = Array.from(requiredInputs).every(input => { if (input.type === 'checkbox') return input.checked; return input.value.trim() !== ''; }); const phone = phoneNumberInput.value; if (isAllValid && (phone.length !== 10 || phone.charAt(0) !== '0')) { isAllValid = false; } return isAllValid; }
+            form.addEventListener('input', () => { submitButton.disabled = !isFormFullyValid(); });
+            confirmCheckbox.addEventListener('change', function() {
+                const textInputs = form.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"]');
+                const prefixButtons = form.querySelectorAll('.prefix-btn');
+                if (this.checked) { if (!isFormFullyValid()) { Swal.fire({ icon: 'warning', title: 'ข้อมูลยังไม่ครบถ้วน', text: 'กรุณากรอกข้อมูล * ให้ครบถ้วนก่อน'}); this.checked = false; return; } }
+                textInputs.forEach(el => { el.readOnly = this.checked; });
+                prefixButtons.forEach(el => { el.disabled = this.checked; });
+            });
+        }
+        main();
+    </script>
+</body>
+</html>
